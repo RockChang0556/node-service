@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "ES2015",
+		"esModuleInterop": true,
+		"allowJs": true, // 是否允许出现js
+		"checkJs": true,
+		"noImplicitAny": false, // 禁止隐式any类型
+		"moduleResolution": "node",
+		"sourceMap": false,
+		"experimentalDecorators": true,
+		"removeComments": true,
+		"baseUrl": ".",
+		"paths": {
+      "@/*": ["src/*"],
+		},
+	},
+	"compileOnSave": true
+}
