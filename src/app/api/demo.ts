@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-05-19 11:43:16
+ * @LastEditTime: 2021-08-06 12:02:06
  * @Description: 路由文件-demo
  */
 
@@ -15,8 +15,8 @@ router.prefix(`/demo`);
 router.get('/get', async ctx => {
   // http://localhost:3000/api/demo/get?id=1  => {id: 1}
   const v = await new PositiveIntValidator().validate(ctx);
-  console.log('v', v);
-  if (ctx.request.query.id) {
+  const id = v.get('query.id');
+  if (id) {
     ctx.body = ctx.request.query;
   } else {
     throw new ParamsErr('id必填');
