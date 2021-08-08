@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-05-19 17:38:44
+ * @LastEditTime: 2021-08-08 18:22:26
  * @Description:
  */
 
@@ -29,10 +29,14 @@ class User {
     }
   }
   async getUser(val, key) {
-    const res: any = await query(
-      `SELECT * FROM user WHERE ${key || 'id'} = ?`,
-      [val]
-    );
+    let res = null;
+    if (Array.isArray(key)) {
+      const sql: string = key.join(' = ? OR ');
+      const valList = new Array(key.length).fill(val);
+      res = await query(`SELECT * FROM user WHERE (${sql})`, valList);
+    } else {
+      res = await query(`SELECT * FROM user WHERE ${key || 'id'} = ?`, [val]);
+    }
     return res;
   }
 }
