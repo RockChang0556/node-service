@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-08 18:59:05
+ * @LastEditTime: 2021-08-09 17:30:24
  * @Description: 用户相关接口
  */
 
@@ -10,7 +10,7 @@ import { ErrorResponse, DataResponse, AuthFailed } from '@/core/http-exception';
 import { generateToken } from '@/utils/util';
 import { Auth } from '@/middlewares/auth';
 import { PositiveIntValidator } from '@/app/validators/demo';
-import { LoginValidator } from '@/app/validators/user';
+import { LoginValidator, RegisterValidator } from '@/app/validators/user';
 import { User } from '@/app/models/user';
 
 const router = new Router();
@@ -24,11 +24,11 @@ router.post('/login', async ctx => {
   const res = await new User().getUser(account, ['email', 'phone']);
   if (res.length) {
     if (password === res[0].password) {
-      const token = generateToken({
+      const access_token = generateToken({
         id: res[0].id,
         admin: Number(res[0].admin),
       });
-      throw new DataResponse({ token }, '登录成功');
+      throw new DataResponse({ access_token, refresh_token: '' }, '登录成功');
     } else {
       throw new ErrorResponse('密码有误!');
     }
@@ -55,6 +55,27 @@ router.get('/getUser', new Auth().init, async (ctx: any) => {
   } else {
     throw new DataResponse(res);
   }
+});
+
+// 注册
+router.post('/register', async ctx => {
+  const vs = await new RegisterValidator().validate(ctx);
+  const { name, email, password } = vs.get('body');
+  // 判断是否注册过
+  const registered = await new User().getUser(email, 'email');
+  if (registered.length) throw new ErrorResponse('此账号已注册!');
+  // 昵称是否重复
+  const named = await new User().getUser(name, 'name');
+  if (named.length) throw new ErrorResponse('昵称已存在!');
+  // 插入数据
+  await new User().addUser({ name, email, password });
+  throw new DataResponse();
+});
+
+//修改用户信息
+router.post('/update', async ctx => {
+  console.log('ctx', ctx);
+  throw new DataResponse();
 });
 
 module.exports = router;

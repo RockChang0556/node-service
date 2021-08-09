@@ -90,7 +90,6 @@ class Validator {
     const memberKeys = findMembers(this, {
       filter: this._findMembersFilter.bind(this),
     });
-
     const errorMsgs = [];
     // const map = new Map(memberKeys)
     for (let key of memberKeys) {
@@ -110,16 +109,23 @@ class Validator {
     const isCustomFunc = typeof this[key] == 'function' ? true : false;
     let result;
     if (isCustomFunc) {
+      // 函数验证
       try {
-        await this[key](this.data);
-        result = new RuleResult(true);
+        const validRes = await this[key](this.data);
+        if (Array.isArray(validRes) && !validRes[0]) {
+          result = new RuleResult(false, validRes[1] || '参数错误');
+        } else if (!validRes) {
+          // 如果自定函数没有给出错误信息，那么错误信息为默认
+          result = new RuleResult(false, '参数错误');
+        } else {
+          result = new RuleResult(true);
+        }
       } catch (error) {
         result = new RuleResult(
           false,
           error.msg || error.message || '参数错误'
         );
       }
-      // 函数验证
     } else {
       // 属性验证, 数组，内有一组Rule
       const rules = this[key];
@@ -127,7 +133,6 @@ class Validator {
       // 别名替换
       key = alias[key] ? alias[key] : key;
       const param = this._findParam(key);
-
       result = ruleField.validate(param.value);
 
       if (result.pass) {
@@ -217,6 +222,20 @@ class Rule {
 
   validate(field) {
     if (this.name == 'isOptional') return new RuleResult(true);
+    if (this.name === 'isNotEmpty') {
+      // 校验器只有isEmpty, 自定义添加isNotEmpty支持
+      if (validator['isEmpty'](field + '', ...this.params)) {
+        return new RuleResult(false, this.msg || this.message || '参数错误');
+      } else {
+        return new RuleResult(true, '');
+      }
+    }
+    if (!validator[this.name])
+      return new RuleResult(
+        false,
+        `validator: ${this.name} 校验规则不存在, 请检查`
+      );
+
     if (!validator[this.name](field + '', ...this.params)) {
       return new RuleResult(false, this.msg || this.message || '参数错误');
     }
@@ -237,7 +256,7 @@ class RuleField {
       if (allowEmpty) {
         return new RuleFieldResult(true, '', defaultValue);
       } else {
-        return new RuleFieldResult(false, '字段是必填参数');
+        return new RuleFieldResult(false, '缺少必填参数');
       }
     }
 

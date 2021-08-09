@@ -29,7 +29,7 @@ const query = (sql, values) => {
         connection.query(sql, values, (err, rows) => {
           connection.release();
           if (err) {
-            return reject(new Forbidden('数据库查询失败'));
+            return reject(new Forbidden('数据库操作失败'));
           } else {
             return resolve(rows);
           }

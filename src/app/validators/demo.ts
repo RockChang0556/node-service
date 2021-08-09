@@ -1,8 +1,9 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-26 16:03:58
- * @LastEditTime: 2021-08-06 11:52:19
+ * @LastEditTime: 2021-08-09 14:32:18
  * @Description: 参数校验 - demo
+ * https://doc.cms.talelin.com/server/koa/validator.html#%E7%B1%BB%E6%A0%A1%E9%AA%8C
  */
 import { Validator, Rule } from '@/core/validator';
 class PositiveIntValidator extends Validator {

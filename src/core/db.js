@@ -1,17 +1,12 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-27 23:06:11
- * @LastEditTime: 2021-04-27 23:11:21
+ * @LastEditTime: 2021-08-09 10:29:31
  * @Description: 数据库连接
  */
 const { Sequelize, Model } = require('sequelize');
-const {
-  HOST,
-  PORT,
-  USER,
-  PASSWORD,
-  DBNAME,
-} = require('@/config/config.js').DATABASE;
+const { HOST, PORT, USER, PASSWORD, DBNAME } =
+  require('@/config/config.js').DATABASE;
 
 const sequelize = new Sequelize(DBNAME, USER, PASSWORD, {
   dialect: 'mysql',
