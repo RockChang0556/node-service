@@ -1,12 +1,17 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-09 17:30:24
+ * @LastEditTime: 2021-08-10 14:13:08
  * @Description: 用户相关接口
  */
 
 import Router from 'koa-router';
-import { ErrorResponse, DataResponse, AuthFailed } from '@/core/http-exception';
+import {
+  SuccessResponse,
+  ErrorResponse,
+  DataResponse,
+  AuthFailed,
+} from '@/core/http-exception';
 import { generateToken } from '@/utils/util';
 import { Auth } from '@/middlewares/auth';
 import { PositiveIntValidator } from '@/app/validators/demo';
@@ -69,7 +74,7 @@ router.post('/register', async ctx => {
   if (named.length) throw new ErrorResponse('昵称已存在!');
   // 插入数据
   await new User().addUser({ name, email, password });
-  throw new DataResponse();
+  throw new SuccessResponse();
 });
 
 //修改用户信息

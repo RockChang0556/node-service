@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-25 21:06:41
- * @LastEditTime: 2021-05-19 17:09:13
+ * @LastEditTime: 2021-08-10 14:12:38
  * @Description: 请求格式定义
  */
 
@@ -29,7 +29,7 @@ class SuccessResponse extends HttpException {
   constructor(message?: string, code?: number) {
     super();
     this.message = message || '操作成功';
-    this.code = code || 1;
+    this.code = code || 0;
     this.status = 200;
   }
 }

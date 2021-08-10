@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-28 14:51:58
- * @LastEditTime: 2021-08-09 17:44:19
+ * @LastEditTime: 2021-08-10 10:44:16
  * @Description: 参数校验 - user
  */
 
@@ -44,7 +44,7 @@ class RegisterValidator extends PassValidator {
     super();
     this.name = [
       new Rule('isNotEmpty', '昵称不可为空'),
-      new Rule('isLength', '昵称长度必须在2~10之间', 2, 10),
+      new Rule('isLength', '昵称长度必须在2~16之间', 2, 16),
     ];
     this.email = [
       new Rule('isNotEmpty', '账号不可为空'),
