@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-03 21:21:54
- * @LastEditTime: 2021-08-10 14:43:18
+ * @LastEditTime: 2021-08-11 19:01:29
  * @Description: 配置文件
  */
 
@@ -32,9 +32,9 @@ export const API = {
 };
 // JWT secret
 export const JWT = {
-  SECRET_KEY: '38fce32e7d20473380cdfc1a642b6802',
-  EXPIRE_IN: 60 * 60 * 1000 * 24,
-  // EXPIRE_IN: 60,
+  secret: '38fce32e7d20473380cdfc1a642b6802',
+  accessExp: 60 * 60, // 1天
+  refreshExp: 60 * 60 * 24 * 30, // 一个月
 };
 // 路径配置
 export const PATH = {

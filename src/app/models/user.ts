@@ -5,7 +5,7 @@
  * @Description:
  */
 
-import { query } from '@/utils/util';
+import { query } from '@/utils/query';
 import { ErrorResponse } from '@/core/http-exception';
 
 // interface UserType {

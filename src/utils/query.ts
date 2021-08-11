@@ -1,15 +1,6 @@
 import mysql from 'mysql';
-import jwt from 'jsonwebtoken';
-import { JWT, DATABASE as db } from '@/constant/config';
+import { DATABASE as db } from '@/constant/config';
 import { Forbidden } from '@/core/http-exception';
-
-// 生成jwt令牌
-const generateToken = (data: any) => {
-  const token = jwt.sign(data, JWT.SECRET_KEY, {
-    expiresIn: JWT.EXPIRE_IN,
-  });
-  return token;
-};
 
 // 数据库查询方法
 const query = (sql, values) => {
@@ -39,4 +30,4 @@ const query = (sql, values) => {
   });
 };
 
-export { generateToken, query };
+export { query };

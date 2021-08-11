@@ -3,7 +3,7 @@ import path from 'path';
 import koabody from 'koa-body'; // 解析参数,和body-parser相比,支持上传功能
 import InitManager from '@/core/init';
 import catchError from '@/middlewares/exception';
-// import { query } from '@/utils/util';
+// import { query } from '@/utils/query';
 import { SERVICE } from '@/constant/config';
 
 const app = new Koa(); // 创建koa应用
@@ -32,7 +32,8 @@ app.use(
   })
 );
 
-InitManager.init(app);
+// 初始化
+new InitManager(app).init();
 
 // 启动服务
 app.listen(SERVICE.PORT, () => {
