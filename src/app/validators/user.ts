@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-28 14:51:58
- * @LastEditTime: 2021-08-10 17:54:54
+ * @LastEditTime: 2021-08-12 11:36:07
  * @Description: 参数校验 - user
  */
 
@@ -18,6 +18,16 @@ class PassValidator extends Validator {
         '密码长度在6~18之间，支持字母、数字,特殊字符',
         /^[\w#@!~%^&*]{6,18}$/
       ),
+    ];
+  }
+}
+class EmailValidator extends Validator {
+  email: Rule[];
+  constructor() {
+    super();
+    this.email = [
+      new Rule('isNotEmpty', '邮箱不可为空'),
+      new Rule('isEmail', '电子邮箱不符合规范，请输入正确的邮箱'),
     ];
   }
 }
@@ -65,4 +75,4 @@ class RegisterValidator extends PassValidator {
     }
   }
 }
-export { LoginValidator, RegisterValidator };
+export { LoginValidator, RegisterValidator, EmailValidator };

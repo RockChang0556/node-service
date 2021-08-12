@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-08-12 10:03:45
+ * @LastEditTime: 2021-08-12 16:37:38
  * @Description: 数据库操作 - user
  */
 
@@ -48,9 +48,35 @@ class User {
     }
     return res;
   }
-  // 添加用户
+  /** 添加用户
+   * @param {*} data 用户信息
+   * @return {*}
+   */
   async addUser(data) {
     const res: any = await query(`INSERT INTO user SET ?`, [data]);
+    return res;
+  }
+
+  /** 添加邮箱验证码, 邮箱为主键, 没有则添加, 有则更新验证码
+   * @param {object} data
+   * @return {*}
+   */
+  async addEmailCode(data: { email: string; code: string; expire_time: Date }) {
+    const res: any = await query(`REPLACE INTO email_code SET ?`, [data]);
+    return res;
+  }
+  // 删除验证码 - 一般超时自动删除
+  async deleteEmailCode(email: string) {
+    const res: any = await query(`DELETE FROM email_code WHERE email=?`, [
+      email,
+    ]);
+    return res;
+  }
+  // 获取验证码
+  async getEmailCode(email: string) {
+    const res: any = await query(`SELECT * FROM email_code WHERE email=?`, [
+      email,
+    ]);
     return res;
   }
 }

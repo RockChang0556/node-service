@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-12 10:00:21
+ * @LastEditTime: 2021-08-12 18:02:25
  * @Description: 用户相关接口
  */
 
@@ -14,9 +14,14 @@ import {
 } from '@/core/http-exception';
 import { Auth } from '@/middlewares/auth';
 import { PositiveIntValidator } from '@/app/validators/demo';
-import { LoginValidator, RegisterValidator } from '@/app/validators/user';
+import {
+  LoginValidator,
+  RegisterValidator,
+  EmailValidator,
+} from '@/app/validators/user';
 import { User } from '@/app/models/user';
 import { jwt } from '@/utils/jwt';
+import { emailUtils } from '@/utils/email';
 
 const userModel = new User();
 const router = new Router();
@@ -83,6 +88,21 @@ router.post('/register', async ctx => {
 router.post('/update', async ctx => {
   console.log('ctx', ctx);
   throw new DataResponse();
+});
+
+// 发送验证码
+router.post('/email/code', async ctx => {
+  const vs = await new EmailValidator().validate(ctx);
+  const { email, reason } = vs.get('body');
+  await emailUtils.sendCode(email, reason || '注册账号');
+});
+
+// 校验验证码
+router.post('/email/validate', async ctx => {
+  const vs = await new EmailValidator().validate(ctx);
+  const { email, code } = vs.get('body');
+  await emailUtils.verifyCode(email, code);
+  throw new SuccessResponse('验证码校验成功');
 });
 
 module.exports = router;

@@ -1,8 +1,8 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-11 16:02:03
- * @LastEditTime: 2021-08-11 19:16:53
- * @Description: 令牌类，提供令牌的生成和解析功能
+ * @LastEditTime: 2021-08-12 17:48:56
+ * @Description: 令牌类，提供令牌的生成和解析功能 code范围4000-4100
  * https://github.com/TaleLin/lin-cms-koa-core/blob/master/lib/jwt/jwt.ts
  */
 import Application from 'koa';
@@ -59,17 +59,17 @@ class Token {
   /**
    * 令牌的secret值，用于令牌的加密
    */
-  secret: string | undefined;
+  private secret: string | undefined;
 
   /**
    * access token 默认的过期时间
    */
-  accessExp: number = 60 * 60; // 1h;
+  private accessExp: number = 60 * 60; // 1h;
 
   /**
    * refresh token 默认的过期时间
    */
-  refreshExp: number = 60 * 60 * 24 * 30 * 3; // 3 months
+  private refreshExp: number = 60 * 60 * 24 * 30 * 3; // 3 months
 
   /**
    * 构造函数
