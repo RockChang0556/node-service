@@ -11,9 +11,11 @@
 		"experimentalDecorators": true,
 		"removeComments": true,
 		"baseUrl": ".",
+		"outDir": "./",
 		"paths": {
       "@/*": ["src/*"],
 		},
 	},
+	"exclude": ["node_modules", "dist"],
 	"compileOnSave": true
 }

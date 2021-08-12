@@ -1,8 +1,8 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-08-09 17:21:21
- * @Description:
+ * @LastEditTime: 2021-08-12 10:03:45
+ * @Description: 数据库操作 - user
  */
 
 import { query } from '@/utils/query';
@@ -17,6 +17,10 @@ import { ErrorResponse } from '@/core/http-exception';
 // }
 
 class User {
+  /** 根据 id 查询用户信息
+   * @param {*} id
+   * @return {*}
+   */
   async getUserById(id) {
     const res: any = await query(
       `SELECT id,name,email,phone,admin FROM user WHERE id = ?`,
@@ -29,10 +33,9 @@ class User {
     }
   }
   /**
-   * @description: 根据key和val查用户信息
+   * 根据key和val查用户信息
    * @param {*} val 值
    * @param {string|string[]} key 查找的key
-   * @return {*}
    */
   async getUser(val, key: string | string[]) {
     let res = null;

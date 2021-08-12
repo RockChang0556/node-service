@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-11 19:12:04
+ * @LastEditTime: 2021-08-12 10:00:21
  * @Description: 用户相关接口
  */
 
@@ -18,6 +18,7 @@ import { LoginValidator, RegisterValidator } from '@/app/validators/user';
 import { User } from '@/app/models/user';
 import { jwt } from '@/utils/jwt';
 
+const userModel = new User();
 const router = new Router();
 // 接口前缀
 router.prefix(`/user`);
@@ -26,7 +27,7 @@ router.prefix(`/user`);
 router.post('/login', async ctx => {
   const vs = await new LoginValidator().validate(ctx);
   const { account, password } = vs.get('body');
-  const res = await new User().getUser(account, ['email', 'phone']);
+  const res = await userModel.getUser(account, ['email', 'phone']);
   if (res.length) {
     if (password === res[0].password) {
       const { accessToken: access_token, refreshToken: refresh_token } =
@@ -46,7 +47,7 @@ router.post('/login', async ctx => {
 // 获取当前登录用户信息
 router.get('/getCurrentUser', new Auth().init, async (ctx: any) => {
   const user = ctx.user;
-  const res = await new User().getUserById(user.id);
+  const res = await userModel.getUserById(user.id);
   throw new DataResponse(res);
 });
 
@@ -54,7 +55,7 @@ router.get('/getCurrentUser', new Auth().init, async (ctx: any) => {
 router.get('/getUser', new Auth().init, async (ctx: any) => {
   const vs = await new PositiveIntValidator().validate(ctx);
   const id = vs.get('query.id');
-  const res: any = await new User().getUserById(id); // 查询人
+  const res: any = await userModel.getUserById(id); // 查询人
   const user = ctx.user; // 当前登录人
   if (user.admin < res.admin) {
     throw new AuthFailed('权限不足, 无法查看对方信息', 4102);
@@ -68,13 +69,13 @@ router.post('/register', async ctx => {
   const vs = await new RegisterValidator().validate(ctx);
   const { name, email, password } = vs.get('body');
   // 判断是否注册过
-  const registered = await new User().getUser(email, 'email');
+  const registered = await userModel.getUser(email, 'email');
   if (registered.length) throw new ErrorResponse('此账号已注册!');
   // 昵称是否重复
-  const named = await new User().getUser(name, 'name');
+  const named = await userModel.getUser(name, 'name');
   if (named.length) throw new ErrorResponse('昵称已存在!');
   // 插入数据
-  await new User().addUser({ name, email, password });
+  await userModel.addUser({ name, email, password });
   throw new SuccessResponse();
 });
 
