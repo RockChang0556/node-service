@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-13 11:46:31
+ * @LastEditTime: 2021-08-13 14:13:31
  * @Description: 用户相关接口
  */
 
@@ -74,13 +74,15 @@ router.get('/get_user', new Auth().init, async (ctx: any) => {
 // 注册
 router.post('/register', async ctx => {
   const vs = await new RegisterValidator().validate(ctx);
-  const { name, email, password } = vs.get('body');
+  const { name, email, password, code } = vs.get('body');
   // 判断是否注册过
   const registered = await userModel.getUser(email, 'email');
   if (registered.length) throw new ErrorResponse('此账号已注册!');
   // 昵称是否重复
   const named = await userModel.getUser(name, 'name');
   if (named.length) throw new ErrorResponse('昵称已存在!');
+  // 校验验证码
+  await emailUtils.verifyCode(email, code);
   // 插入数据
   await userModel.addUser({ name, email, password });
   throw new SuccessResponse();

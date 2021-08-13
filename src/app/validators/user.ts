@@ -1,18 +1,18 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-28 14:51:58
- * @LastEditTime: 2021-08-13 12:05:48
+ * @LastEditTime: 2021-08-13 13:17:05
  * @Description: 参数校验 - user
  */
 
 import { Validator, Rule } from '@/core/validator';
 
-const commonEamil = [
+const emailRule = [
   new Rule('isNotEmpty', '账号不可为空'),
   new Rule('isEmail', '电子邮箱不符合规范，请输入正确的邮箱'),
 ];
 
-const commonPass = [
+const passwordRule = [
   new Rule('isNotEmpty', '密码不可为空'),
   new Rule(
     'matches',
@@ -20,31 +20,36 @@ const commonPass = [
     /^[\w#@!~%^&*]{6,18}$/
   ),
 ];
+const codeRule = [
+  new Rule('isNotEmpty', '验证码不可为空'),
+  new Rule('matches', '验证码为4位数字', /^[0-9]{4}$/),
+];
 
-const commonConfirmPassword = data => {
-  if (!data.body.password || !data.body.confirm_password) {
-    return [false, '两次输入的密码不一致，请重新输入'];
-  }
-  let ok = data.body.password === data.body.confirm_password;
-  if (ok) {
-    return ok;
-  } else {
-    return [false, '两次输入的密码不一致，请重新输入'];
-  }
-};
+// 确认密码验证
+// const confirmPasswordRule = data => {
+//   if (!data.body.password || !data.body.confirm_password) {
+//     return [false, '两次输入的密码不一致，请重新输入'];
+//   }
+//   let ok = data.body.password === data.body.confirm_password;
+//   if (ok) {
+//     return ok;
+//   } else {
+//     return [false, '两次输入的密码不一致，请重新输入'];
+//   }
+// };
 
 class PassValidator extends Validator {
   password: Rule[];
   constructor() {
     super();
-    this.password = commonPass;
+    this.password = passwordRule;
   }
 }
 class EmailValidator extends Validator {
   email: Rule[];
   constructor() {
     super();
-    this.email = commonEamil;
+    this.email = emailRule;
   }
 }
 
@@ -65,22 +70,18 @@ class LoginValidator extends PassValidator {
 class RegisterValidator extends PassValidator {
   name: Rule[];
   email: Rule[];
-  confirm_password: Rule;
+  code: Rule[];
   constructor() {
     super();
     this.name = [
       new Rule('isNotEmpty', '昵称不可为空'),
       new Rule('isLength', '昵称长度必须在2~10之间', 2, 10),
     ];
-    this.email = commonEamil;
-    this.confirm_password = new Rule('isNotEmpty', '确认密码不可为空');
-  }
-
-  // 自定义规则函数, 必须 validate 开头
-  validateConfirmPassword(data) {
-    commonConfirmPassword(data);
+    this.email = emailRule;
+    this.code = codeRule;
   }
 }
+
 class EmailCodeValidator extends EmailValidator {
   reason: Rule[];
   constructor() {
@@ -95,16 +96,13 @@ class UpdatePasswordValidator extends PassValidator {
   // confirm_password: Rule;
   constructor() {
     super();
-    this.code = [
-      new Rule('isNotEmpty', '验证码不可为空'),
-      new Rule('matches', '验证码为4位数字', /^[0-9]{4}$/),
-    ];
-    this.email = commonEamil;
+    this.code = codeRule;
+    this.email = emailRule;
     // this.confirm_password = new Rule('isNotEmpty', '确认密码不可为空');
   }
   // 自定义规则函数, 必须 validate 开头
   // validateConfirmPassword(data) {
-  //   commonConfirmPassword(data);
+  //   confirmPasswordRule(data);
   // }
 }
 export {
