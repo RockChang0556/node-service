@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-08-12 16:37:38
+ * @LastEditTime: 2021-08-12 19:36:45
  * @Description: 数据库操作 - user
  */
 
@@ -56,6 +56,33 @@ class User {
     const res: any = await query(`INSERT INTO user SET ?`, [data]);
     return res;
   }
+  /** 更新用户信息
+   * @param {number} id 用户id
+   * @param {*} data 要更新的数据
+   * @return {*}
+   */
+  async updateUser(id: number, data) {
+    const arr = Object.keys(data).map(key => {
+      return `${key}='${data[key]}'`;
+    });
+    const res: any = await query(
+      `UPDATE user SET ${arr.join(',')} WHERE id=?;`,
+      [id]
+    );
+    return res;
+  }
+  /** 邮箱重置密码
+   * @param {string} email
+   * @param {string} new_pass
+   * @return {*}
+   */
+  async updatePassword(email: string, new_pass: string) {
+    const res: any = await query(`UPDATE user SET password=? WHERE email=?;`, [
+      new_pass,
+      email,
+    ]);
+    return res;
+  }
 
   /** 添加邮箱验证码, 邮箱为主键, 没有则添加, 有则更新验证码
    * @param {object} data
@@ -65,7 +92,7 @@ class User {
     const res: any = await query(`REPLACE INTO email_code SET ?`, [data]);
     return res;
   }
-  // 删除验证码 - 一般超时自动删除
+  // 删除验证码
   async deleteEmailCode(email: string) {
     const res: any = await query(`DELETE FROM email_code WHERE email=?`, [
       email,
