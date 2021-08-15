@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-08-12 19:36:45
+ * @LastEditTime: 2021-08-15 11:07:47
  * @Description: 数据库操作 - user
  */
 
@@ -22,14 +22,15 @@ class User {
    * @return {*}
    */
   async getUserById(id) {
-    const res: any = await query(
-      `SELECT id,name,email,phone,admin FROM user WHERE id = ?`,
-      [id]
-    );
+    const res: any = await query(`SELECT * FROM user WHERE id = ?`, [id]);
     if (!res.length) {
       throw new ErrorResponse('获取用户信息失败!');
     } else {
-      return res[0];
+      const data = res[0];
+      delete data.password;
+      delete data.create_time;
+      delete data.update_time;
+      return data;
     }
   }
   /**
