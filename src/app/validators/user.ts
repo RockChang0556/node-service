@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-28 14:51:58
- * @LastEditTime: 2021-08-13 13:17:05
+ * @LastEditTime: 2021-08-16 10:41:05
  * @Description: 参数校验 - user
  */
 
@@ -105,10 +105,32 @@ class UpdatePasswordValidator extends PassValidator {
   //   confirmPasswordRule(data);
   // }
 }
+
+class GetUserValidator extends Validator {
+  id: Rule[];
+  email: Rule[];
+  phone: Rule[];
+  constructor() {
+    super();
+    this.id = [
+      new Rule('isOptional'), // 可选参数
+      new Rule('isInt', 'id必须为正整数', { min: 1 }),
+    ];
+    this.email = [
+      new Rule('isOptional'),
+      new Rule('isEmail', '电子邮箱不符合规范，请输入正确的邮箱'),
+    ];
+    this.phone = [
+      new Rule('isOptional'),
+      new Rule('matches', '手机格式不正确', /(^1[3|4|5|7|8]\d{9}$)/),
+    ];
+  }
+}
 export {
   LoginValidator,
   RegisterValidator,
   EmailValidator,
   EmailCodeValidator,
   UpdatePasswordValidator,
+  GetUserValidator,
 };

@@ -1,13 +1,23 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-08-15 11:07:47
+ * @LastEditTime: 2021-08-16 14:11:09
  * @Description: 数据库操作 - user
  */
 
 import { query } from '@/utils/query';
 import { ErrorResponse } from '@/core/http-exception';
+import { cloneDeep } from 'lodash';
 
+export function formatUser(data) {
+  const res = cloneDeep(data);
+  res.forEach((v: any) => {
+    delete v.password;
+    delete v.create_time;
+    delete v.update_time;
+  });
+  return res;
+}
 // interface UserType {
 //   id: string;
 //   name: string;
@@ -26,11 +36,8 @@ class User {
     if (!res.length) {
       throw new ErrorResponse('获取用户信息失败!');
     } else {
-      const data = res[0];
-      delete data.password;
-      delete data.create_time;
-      delete data.update_time;
-      return data;
+      const data = formatUser(res);
+      return data[0];
     }
   }
   /**

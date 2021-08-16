@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-13 14:13:31
+ * @LastEditTime: 2021-08-16 14:11:01
  * @Description: 用户相关接口
  */
 
@@ -11,17 +11,19 @@ import {
   ErrorResponse,
   DataResponse,
   AuthFailed,
+  ParamsErr,
 } from '@/core/http-exception';
 import { Auth } from '@/middlewares/auth';
-import { PositiveIntValidator, Validator } from '@/app/validators/demo';
+import { Validator } from '@/app/validators/demo';
 import {
   LoginValidator,
   RegisterValidator,
   EmailValidator,
   EmailCodeValidator,
   UpdatePasswordValidator,
+  GetUserValidator,
 } from '@/app/validators/user';
-import { User } from '@/app/models/user';
+import { User, formatUser } from '@/app/models/user';
 import { jwt } from '@/utils/jwt';
 import { emailUtils } from '@/utils/email';
 
@@ -60,15 +62,41 @@ router.get('/current', new Auth().init, async (ctx: any) => {
 
 // 获取指定用户信息
 router.get('/get_user', new Auth().init, async (ctx: any) => {
-  const vs = await new PositiveIntValidator().validate(ctx);
-  const id = vs.get('query.id');
-  const res: any = await userModel.getUserById(id); // 查询人
+  const vs = await new GetUserValidator().validate(ctx);
+  const { id, email, phone } = vs.get('query');
+  let res: any;
+  if (id) {
+    res = await userModel.getUser(id, 'id'); // 查询人
+  } else if (email) {
+    res = await userModel.getUser(email, 'email'); // 查询人
+  } else if (phone) {
+    res = await userModel.getUser(phone, 'phone'); // 查询人
+  } else {
+    throw new ParamsErr('缺少查询条件', 4);
+  }
   const user = ctx.user; // 当前登录人
   if (user.admin < res.admin) {
     throw new AuthFailed('权限不足, 无法查看对方信息', 4102);
   } else {
-    throw new DataResponse(res);
+    throw new DataResponse(formatUser(res)[0]);
   }
+});
+
+// 获取指定用户是否存在
+router.get('/has_user', async (ctx: any) => {
+  const vs = await new GetUserValidator().validate(ctx);
+  const { id, email, phone } = vs.get('query');
+  let res: any;
+  if (id) {
+    res = await userModel.getUser(id, 'id'); // 查询人
+  } else if (email) {
+    res = await userModel.getUser(email, 'email'); // 查询人
+  } else if (phone) {
+    res = await userModel.getUser(phone, 'phone'); // 查询人
+  } else {
+    throw new ParamsErr('缺少查询条件', 4);
+  }
+  throw new DataResponse({ has_user: !!res.length });
 });
 
 // 注册
