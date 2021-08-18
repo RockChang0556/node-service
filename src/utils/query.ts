@@ -11,6 +11,7 @@ const query = (sql, values) => {
     password: db.PASSWORD,
     database: db.DBNAME,
     connectionLimit: db.CONNECTION_LIMIT,
+    multipleStatements: true, // 允许执行多条查询语句
   });
   return new Promise((resolve, reject) => {
     pool.getConnection((err, connection) => {

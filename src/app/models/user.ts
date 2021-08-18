@@ -1,13 +1,14 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-08-17 15:08:15
+ * @LastEditTime: 2021-08-19 00:19:01
  * @Description: 数据库操作 - user
  */
 
 import { query } from '@/utils/query';
 import { ErrorResponse } from '@/core/http-exception';
 import { cloneDeep } from 'lodash';
+import { sqlAll } from './common';
 
 export function formatUser(data) {
   const res = cloneDeep(data);
@@ -112,6 +113,17 @@ class User {
     const res: any = await query(`SELECT * FROM email_code WHERE email=?`, [
       email,
     ]);
+    return res;
+  }
+
+  /** 获取所有信息
+   * @param {object} querys 模糊查询参数
+   * @param {object} orders 排序参数
+   * @param {object} pages 分页参数
+   * @return {*}
+   */
+  async getAll(querys = {}, orders = {}, pages) {
+    const res = await sqlAll('user', querys, orders, pages);
     return res;
   }
 }

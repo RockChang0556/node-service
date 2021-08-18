@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-17 18:47:40
+ * @LastEditTime: 2021-08-19 00:57:11
  * @Description: 用户相关接口
  */
 
@@ -26,6 +26,7 @@ import {
 import { User, formatUser } from '@/app/models/user';
 import { jwt } from '@/utils/jwt';
 import { emailUtils } from '@/utils/email';
+import { ADMIN } from '@/constant/emun';
 
 const userModel = new User();
 const router = new Router();
@@ -146,6 +147,14 @@ router.post('/email/validate', async ctx => {
   const { email, code } = vs.get('body');
   await emailUtils.verifyCode(email, code);
   throw new SuccessResponse('验证码校验成功');
+});
+
+// 管理员获取所有用户
+router.post('/list', new Auth(ADMIN.READ).init, async (ctx: any) => {
+  const vs = await new Validator().validate(ctx);
+  const { querys, orders, pages } = vs.get('body');
+  const res: any = await userModel.getAll(querys, orders, pages);
+  throw new DataResponse(res);
 });
 
 module.exports = router;

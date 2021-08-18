@@ -1,13 +1,14 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 10:12:10
- * @LastEditTime: 2021-08-17 18:37:20
+ * @LastEditTime: 2021-08-19 01:14:46
  * @Description: 文件相关接口
  */
 import Router from 'koa-router';
 import { Auth } from '@/middlewares/auth';
 import { DataResponse, ErrorResponse } from '@/core/http-exception';
-import { PositiveIntValidator } from '@/app/validators/demo';
+import { PositiveIntValidator, Validator } from '@/app/validators/demo';
+import { ADMIN } from '@/constant/emun';
 import { file } from '@/utils/file';
 import { File } from '@/app/models/file';
 const fileModel = new File();
@@ -23,6 +24,7 @@ router.post('/upload', new Auth().init, async (ctx: any, next) => {
   throw new DataResponse(files);
 });
 
+// 获取文件信息
 router.get('/getfile', new Auth().init, async (ctx: any) => {
   const vs = await new PositiveIntValidator().validate(ctx);
   const { id } = vs.get('query');
@@ -34,6 +36,14 @@ router.get('/getfile', new Auth().init, async (ctx: any) => {
     delete file.md5;
     throw new DataResponse(file);
   }
+});
+
+// 获取所有文件
+router.post('/list', new Auth(ADMIN.READ).init, async (ctx: any) => {
+  const vs = await new Validator().validate(ctx);
+  const { querys, orders, pages } = vs.get('body');
+  const res: any = await fileModel.getAll(querys, orders, pages);
+  throw new DataResponse(res);
 });
 
 module.exports = router;
