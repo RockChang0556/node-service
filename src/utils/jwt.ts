@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-11 16:02:03
- * @LastEditTime: 2021-08-12 17:48:56
+ * @LastEditTime: 2021-08-17 14:23:19
  * @Description: 令牌类，提供令牌的生成和解析功能 code范围4000-4100
  * https://github.com/TaleLin/lin-cms-koa-core/blob/master/lib/jwt/jwt.ts
  */
@@ -14,7 +14,6 @@ import {
 } from '@/core/http-exception';
 import { RouterContext } from 'koa-router';
 import { get } from 'lodash';
-// import { TokenType, TokenCode } from '@/constant/token';
 import { JWT } from '@/constant/config';
 
 interface tokenInfo {

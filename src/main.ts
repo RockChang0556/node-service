@@ -1,6 +1,12 @@
+/*
+ * @Author: Rock Chang
+ * @Date: 2021-08-08 17:25:29
+ * @LastEditTime: 2021-08-17 18:46:57
+ * @Description: main.ts
+ */
 import Koa from 'koa';
-import path from 'path';
-import koabody from 'koa-body'; // 解析参数,和body-parser相比,支持上传功能
+import koaStatic from 'koa-static';
+import bodyParser from 'koa-bodyparser';
 import InitManager from '@/core/init';
 import catchError from '@/middlewares/exception';
 // import { query } from '@/utils/query';
@@ -16,21 +22,10 @@ const app = new Koa(); // 创建koa应用
 // 全局异常
 app.use(catchError);
 
-app.use(
-  koabody({
-    multipart: true, // 支持文件上传
-    formidable: {
-      uploadDir: path.join(__dirname, 'public/upload/'), // 设置文件上传目录
-      keepExtensions: true, // 保持文件的后缀
-      maxFieldsSize: 2 * 1024 * 1024, // 文件上传大小
-      onFileBegin: () => {
-        // 文件上传前的设置
-        // console.log(`name: ${name}`);
-        // console.log(file);
-      },
-    },
-  })
-);
+// 静态资源
+app.use(koaStatic('public'));
+// 参数解析
+app.use(bodyParser());
 
 // 初始化
 new InitManager(app).init();

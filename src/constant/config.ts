@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-03 21:21:54
- * @LastEditTime: 2021-08-12 21:47:42
+ * @LastEditTime: 2021-08-17 15:57:08
  * @Description: 配置文件
  */
 
@@ -49,6 +49,7 @@ export const PATH = {
   UPLOAD_PATH: 'public/upload',
 };
 // 限制条件配置
-export const LIMIT = {
-  UPLOAD_IMG_SIZE: 200 * 1024 * 1024,
+export const FILE = {
+  UPLOAD_SIZE: 1024 * 1024 * 1, // 文件大小限制, 单位M
+  OUT_DIR: 'public/uploads/', // 文件存储位置
 };
