@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-19 00:57:11
+ * @LastEditTime: 2021-08-21 15:37:01
  * @Description: 用户相关接口
  */
 
@@ -24,7 +24,7 @@ import {
   GetUserValidator,
 } from '@/app/validators/user';
 import { User, formatUser } from '@/app/models/user';
-import { jwt } from '@/utils/jwt';
+import { jwt, TokenType } from '@/utils/jwt';
 import { emailUtils } from '@/utils/email';
 import { ADMIN } from '@/constant/emun';
 
@@ -52,6 +52,17 @@ router.post('/login', async ctx => {
   } else {
     throw new ErrorResponse('该账号未注册!');
   }
+});
+
+// 更新令牌
+router.get('/refresh', async (ctx: any) => {
+  const { data: decode } = jwt.parseHeader(ctx, TokenType.REFRESH);
+  const { accessToken: access_token, refreshToken: refresh_token } =
+    jwt.getTokens({
+      id: decode.id,
+      admin: Number(decode.admin),
+    });
+  throw new DataResponse({ access_token, refresh_token }, '令牌更新成功');
 });
 
 // 获取当前登录用户信息
