@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-19 00:04:23
- * @LastEditTime: 2021-08-19 00:52:27
+ * @LastEditTime: 2021-08-26 18:54:49
  * @Description: model层的公共方法抽离
  */
 import { query } from '@/utils/query';
@@ -24,7 +24,7 @@ import { query } from '@/utils/query';
   "orders": { "admin": "asc" }
 }
 */
-export async function sqlAll(
+export async function pageKeywordsSql(
   db: string,
   querys?: { [key: string]: string },
   orders?: { [key: string]: 'desc' | 'asc' },

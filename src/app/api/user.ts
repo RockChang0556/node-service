@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-21 15:37:01
+ * @LastEditTime: 2021-08-26 20:01:55
  * @Description: 用户相关接口
  */
 
@@ -23,12 +23,11 @@ import {
   UpdatePasswordValidator,
   GetUserValidator,
 } from '@/app/validators/user';
-import { User, formatUser } from '@/app/models/user';
+import { userModels, formatUser } from '@/app/models/user';
 import { jwt, TokenType } from '@/utils/jwt';
 import { emailUtils } from '@/utils/email';
 import { ADMIN } from '@/constant/emun';
 
-const userModel = new User();
 const router = new Router();
 // 接口前缀
 router.prefix(`/user`);
@@ -37,7 +36,7 @@ router.prefix(`/user`);
 router.post('/login', async ctx => {
   const vs = await new LoginValidator().validate(ctx);
   const { account, password } = vs.get('body');
-  const res = await userModel.getUser(account, ['email', 'phone']);
+  const res = await userModels.getUser(account, ['email', 'phone']);
   if (res.length) {
     if (password === res[0].password) {
       const { accessToken: access_token, refreshToken: refresh_token } =
@@ -68,7 +67,7 @@ router.get('/refresh', async (ctx: any) => {
 // 获取当前登录用户信息
 router.get('/current', new Auth().init, async (ctx: any) => {
   const user = ctx.user;
-  const res = await userModel.getUserById(user.id);
+  const res = await userModels.getUserById(user.id);
   throw new DataResponse(res);
 });
 
@@ -78,11 +77,11 @@ router.get('/get_user', new Auth().init, async (ctx: any) => {
   const { id, email, phone } = vs.get('query');
   let res: any;
   if (id) {
-    res = await userModel.getUser(id, 'id'); // 查询人
+    res = await userModels.getUser(id, 'id'); // 查询人
   } else if (email) {
-    res = await userModel.getUser(email, 'email'); // 查询人
+    res = await userModels.getUser(email, 'email'); // 查询人
   } else if (phone) {
-    res = await userModel.getUser(phone, 'phone'); // 查询人
+    res = await userModels.getUser(phone, 'phone'); // 查询人
   } else {
     throw new ParamsErr('缺少查询条件', 4);
   }
@@ -100,11 +99,11 @@ router.get('/has_user', async (ctx: any) => {
   const { id, email, phone } = vs.get('query');
   let res: any;
   if (id) {
-    res = await userModel.getUser(id, 'id'); // 查询人
+    res = await userModels.getUser(id, 'id'); // 查询人
   } else if (email) {
-    res = await userModel.getUser(email, 'email'); // 查询人
+    res = await userModels.getUser(email, 'email'); // 查询人
   } else if (phone) {
-    res = await userModel.getUser(phone, 'phone'); // 查询人
+    res = await userModels.getUser(phone, 'phone'); // 查询人
   } else {
     throw new ParamsErr('缺少查询条件', 4);
   }
@@ -116,15 +115,15 @@ router.post('/register', async ctx => {
   const vs = await new RegisterValidator().validate(ctx);
   const { name, email, password, code } = vs.get('body');
   // 判断是否注册过
-  const registered = await userModel.getUser(email, 'email');
+  const registered = await userModels.getUser(email, 'email');
   if (registered.length) throw new ErrorResponse('此账号已注册!');
   // 昵称是否重复
-  const named = await userModel.getUser(name, 'name');
+  const named = await userModels.getUser(name, 'name');
   if (named.length) throw new ErrorResponse('昵称已存在!');
   // 校验验证码
   await emailUtils.verifyCode(email, code);
   // 插入数据
-  await userModel.addUser({ name, email, password });
+  await userModels.addUser({ name, email, password });
   throw new SuccessResponse();
 });
 
@@ -132,7 +131,7 @@ router.post('/register', async ctx => {
 router.post('/update', new Auth().init, async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const data = vs.get('body');
-  await userModel.updateUser(ctx.user.id, data);
+  await userModels.updateUser(ctx.user.id, data);
   throw new SuccessResponse();
 });
 
@@ -141,7 +140,7 @@ router.post('/update_password', async (ctx: any) => {
   const vs = await new UpdatePasswordValidator().validate(ctx);
   const { email, code, password } = vs.get('body');
   await emailUtils.verifyCode(email, code);
-  await userModel.updatePassword(email, password);
+  await userModels.updatePassword(email, password);
   throw new SuccessResponse();
 });
 
@@ -164,7 +163,7 @@ router.post('/email/validate', async ctx => {
 router.post('/list', new Auth(ADMIN.READ).init, async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const { querys, orders, pages } = vs.get('body');
-  const res: any = await userModel.getAll(querys, orders, pages);
+  const res: any = await userModels.getAll(querys, orders, pages);
   throw new DataResponse(res);
 });
 

@@ -1,12 +1,12 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 14:45:28
- * @LastEditTime: 2021-08-19 00:19:06
+ * @LastEditTime: 2021-08-26 20:52:15
  * @Description: 数据库操作 - file
  */
 
 import { query } from '@/utils/query';
-import { sqlAll } from './common';
+import { pageKeywordsSql } from './common';
 
 class File {
   /** 添加文件
@@ -37,9 +37,16 @@ class File {
    * @return {*}
    */
   async getAll(querys = {}, orders = {}, pages) {
-    const res = await sqlAll('file', querys, orders, pages);
+    const res = await pageKeywordsSql('file', querys, orders, pages);
+    return res;
+  }
+
+  // 删除文件
+  async deleteFile(path: string) {
+    const res: any = await query(`DELETE FROM file WHERE path=?`, [path]);
     return res;
   }
 }
 
-export { File };
+const fileModels = new File();
+export { File, fileModels };

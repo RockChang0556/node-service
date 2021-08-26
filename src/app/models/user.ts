@@ -1,14 +1,14 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-30 17:28:33
- * @LastEditTime: 2021-08-19 00:19:01
+ * @LastEditTime: 2021-08-26 20:00:58
  * @Description: 数据库操作 - user
  */
 
 import { query } from '@/utils/query';
 import { ErrorResponse } from '@/core/http-exception';
 import { cloneDeep } from 'lodash';
-import { sqlAll } from './common';
+import { pageKeywordsSql } from './common';
 
 export function formatUser(data) {
   const res = cloneDeep(data);
@@ -123,9 +123,17 @@ class User {
    * @return {*}
    */
   async getAll(querys = {}, orders = {}, pages) {
-    const res = await sqlAll('user', querys, orders, pages);
+    const res = await pageKeywordsSql('user', querys, orders, pages);
+    return res;
+  }
+
+  // 获取所有的头像路径
+  async getAllPath() {
+    const res: any = await query(`SELECT avatar_url FROM user`, []);
     return res;
   }
 }
 
-export { User };
+const userModels = new User();
+
+export { User, userModels };
