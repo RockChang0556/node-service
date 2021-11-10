@@ -7,7 +7,7 @@
 		"checkJs": true,
 		"noImplicitAny": false, // 禁止隐式any类型
 		"moduleResolution": "node",
-		"sourceMap": false,
+		"sourceMap": true,
 		"experimentalDecorators": true,
 		"removeComments": true,
 		"baseUrl": ".",
