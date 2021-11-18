@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-11-08 15:27:46
- * @LastEditTime: 2021-11-10 16:20:58
+ * @LastEditTime: 2021-11-18 17:26:03
  * @Description:
  */
 const path = require('path');
@@ -12,7 +12,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
   entry: './src/main.ts',
   output: {
-    filename: 'bundle.js',
+    filename: 'bundle.[contenthash:8].js',
     path: path.resolve(__dirname, '../dist'),
   },
   module: {
@@ -74,7 +74,7 @@ const config = {
       // 'crypto-browserify': require.resolve('crypto-browserify'), //if you want to use this module also don't forget npm i crypto-browserify
     },
   },
-  // externals: [nodeExcternals()], // 过滤node_modules
+  externals: [nodeExcternals()], // 过滤node_modules
   plugins: [
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin({

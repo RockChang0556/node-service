@@ -1,16 +1,17 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-06 12:02:06
+ * @LastEditTime: 2021-11-18 23:42:34
  * @Description: 路由文件-demo
  */
 
 import Router from 'koa-router';
 import { PositiveIntValidator } from '../validators/demo';
 import { ParamsErr } from '../../core/http-exception';
+import { API } from '@/constant/config';
 
 const router = new Router();
-router.prefix(`/demo`);
+router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/demo`);
 
 router.get('/get', async ctx => {
   // http://localhost:3000/api/demo/get?id=1  => {id: 1}
@@ -34,4 +35,4 @@ router.get('/json/:id/:ids', async ctx => {
   ctx.body = ctx.params;
 });
 
-module.exports = router;
+export default router;

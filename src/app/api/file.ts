@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 10:12:10
- * @LastEditTime: 2021-08-26 20:56:54
+ * @LastEditTime: 2021-11-18 23:44:29
  * @Description: 文件相关接口
  */
 import fs from 'fs';
@@ -15,12 +15,13 @@ import {
 import { PositiveIntValidator, Validator } from '@/app/validators/demo';
 import { ADMIN } from '@/constant/emun';
 import { file } from '@/utils/file';
+import { API } from '@/constant/config';
 import { fileModels } from '@/app/models/file';
 import { userModels } from '@/app/models/user';
 
 const router = new Router();
 // 接口前缀
-router.prefix(`/file`);
+router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/file`);
 
 // 上传文件
 router.post('/upload', new Auth().init, async (ctx: any, next) => {
@@ -73,4 +74,4 @@ router.get('/resetAvatar', new Auth(ADMIN.SUPER).init, async () => {
   throw new SuccessResponse();
 });
 
-module.exports = router;
+export default router;

@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-08-26 20:01:55
+ * @LastEditTime: 2021-11-18 23:44:47
  * @Description: 用户相关接口
  */
 
@@ -27,10 +27,11 @@ import { userModels, formatUser } from '@/app/models/user';
 import { jwt, TokenType } from '@/utils/jwt';
 import { emailUtils } from '@/utils/email';
 import { ADMIN } from '@/constant/emun';
+import { API } from '@/constant/config';
 
 const router = new Router();
 // 接口前缀
-router.prefix(`/user`);
+router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/user`);
 
 // 登陆
 router.post('/login', async ctx => {
@@ -167,4 +168,5 @@ router.post('/list', new Auth(ADMIN.READ).init, async (ctx: any) => {
   throw new DataResponse(res);
 });
 
-module.exports = router;
+export default router;
+// module.exports = router;

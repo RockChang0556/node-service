@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-08 17:25:29
- * @LastEditTime: 2021-11-10 15:24:54
+ * @LastEditTime: 2021-11-18 23:49:57
  * @Description: main.ts
  */
 import Koa from 'koa';
@@ -12,8 +12,8 @@ import jsonutil from 'koa-json';
 import cors from '@koa/cors';
 import compose from 'koa-compose';
 import compress from 'koa-compress';
-import InitManager from '@/core/init';
 import catchError from '@/middlewares/exception';
+import router from '@/core/routers';
 // import { query } from '@/utils/query';
 import { SERVICE } from '@/constant/config';
 
@@ -41,6 +41,8 @@ const middleware = compose([
   jsonutil({ pretty: false, param: 'pretty' }),
   // 请求头处理(安全)
   helmet(),
+  // 路由
+  router(),
 ]);
 app.use(middleware);
 
@@ -51,7 +53,7 @@ if (!isDevMode) {
 }
 
 // 初始化
-new InitManager(app).init();
+// new InitManager(app).init();
 // 启动服务
 app.listen(SERVICE.PORT, () => {
   console.log(`应用已经启动，http://localhost:${SERVICE.PORT}`);
