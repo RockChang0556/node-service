@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-11-08 15:27:46
- * @LastEditTime: 2021-11-18 17:26:03
+ * @LastEditTime: 2021-11-22 15:19:58
  * @Description:
  */
 const path = require('path');
@@ -12,7 +12,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const config = {
   entry: './src/main.ts',
   output: {
-    filename: 'bundle.[contenthash:8].js',
+    filename: 'bundle.js',
     path: path.resolve(__dirname, '../dist'),
   },
   module: {
