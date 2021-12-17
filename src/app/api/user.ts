@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-11-18 23:44:47
+ * @LastEditTime: 2021-12-17 11:22:31
  * @Description: 用户相关接口
  */
 
@@ -25,7 +25,7 @@ import {
 } from '@/app/validators/user';
 import { userModels, formatUser } from '@/app/models/user';
 import { jwt, TokenType } from '@/utils/jwt';
-import { emailUtils } from '@/utils/email';
+import { emailUtils, captchaCode } from '@/utils/email';
 import { ADMIN } from '@/constant/emun';
 import { API } from '@/constant/config';
 
@@ -36,7 +36,9 @@ router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/user`);
 // 登陆
 router.post('/login', async ctx => {
   const vs = await new LoginValidator().validate(ctx);
-  const { account, password } = vs.get('body');
+  const { account, password, sid, captcha } = vs.get('body');
+  // 校验图形验证码
+  await captchaCode.verifyCode(sid, captcha);
   const res = await userModels.getUser(account, ['email', 'phone']);
   if (res.length) {
     if (password === res[0].password) {
@@ -121,7 +123,7 @@ router.post('/register', async ctx => {
   // 昵称是否重复
   const named = await userModels.getUser(name, 'name');
   if (named.length) throw new ErrorResponse('昵称已存在!');
-  // 校验验证码
+  // 校验邮箱验证码
   await emailUtils.verifyCode(email, code);
   // 插入数据
   await userModels.addUser({ name, email, password });
@@ -145,19 +147,27 @@ router.post('/update_password', async (ctx: any) => {
   throw new SuccessResponse();
 });
 
-// 发送验证码
+// 发送邮箱验证码
 router.post('/email/code', async ctx => {
   const vs = await new EmailCodeValidator().validate(ctx);
   const { email, reason } = vs.get('body');
   await emailUtils.sendCode(email, reason);
 });
 
-// 校验验证码
+// 校验邮箱验证码
 router.post('/email/validate', async ctx => {
   const vs = await new EmailValidator().validate(ctx);
   const { email, code } = vs.get('body');
   await emailUtils.verifyCode(email, code);
   throw new SuccessResponse('验证码校验成功');
+});
+
+// 发送图形验证码
+router.get('/getCaptcha', async ctx => {
+  const vs = await new Validator().validate(ctx);
+  const { sid } = vs.get('query');
+  const newCaptca = await captchaCode.sendCode(sid);
+  throw new DataResponse(newCaptca.data);
 });
 
 // 管理员获取所有用户

@@ -1,15 +1,17 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-12 10:20:19
- * @LastEditTime: 2021-08-12 17:49:51
+ * @LastEditTime: 2021-12-17 11:34:44
  * @Description: 邮件类, 提供发送验证码等功能 code范围4100-4200
  */
 
 import nodemailer from 'nodemailer';
 import smtpTransport from 'nodemailer-smtp-transport';
+import svgCaptcha from 'svg-captcha';
 import { EAMIL } from '@/constant/config';
 import { ErrorResponse, SuccessResponse } from '@/core/http-exception';
 import { User } from '@/app/models/user';
+import { redis } from './redis';
 const userModel = new User();
 
 class Email {
@@ -98,10 +100,38 @@ class Email {
     }
   }
 }
+
+class CaptchaCode {
+  async sendCode(sid: string) {
+    const newCaptca = svgCaptcha.create({
+      size: 4,
+      ignoreChars: '0o1il',
+      color: true,
+      noise: Math.floor(Math.random() * 5),
+      width: 120,
+      height: 40,
+    });
+    // 设置图片验证码超时10分钟
+    await redis.set(sid, newCaptca.text, 10 * 60);
+    return newCaptca;
+  }
+  async verifyCode(sid: string, code: string) {
+    const res = await redis.get(sid);
+    if (res) {
+      // 图形验证码是否正确
+      if (res.toLowerCase() !== code.toLowerCase())
+        throw new ErrorResponse('验证码校验失败', 4103);
+      return true;
+    } else {
+      throw new ErrorResponse('验证码失效, 请重新获取', 4104);
+    }
+  }
+}
 const emailUtils = new Email({
   host: EAMIL.HOST,
   user: EAMIL.USER,
   pass: EAMIL.PASSWORD,
 });
+const captchaCode = new CaptchaCode();
 
-export { Email, emailUtils };
+export { Email, emailUtils, captchaCode };

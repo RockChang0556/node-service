@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-28 14:51:58
- * @LastEditTime: 2021-08-16 10:41:05
+ * @LastEditTime: 2021-12-17 11:16:31
  * @Description: 参数校验 - user
  */
 
@@ -55,6 +55,8 @@ class EmailValidator extends Validator {
 
 class LoginValidator extends PassValidator {
   account: Rule[];
+  sid: Rule[];
+  captcha: Rule[];
   constructor() {
     super();
     this.account = [
@@ -64,6 +66,11 @@ class LoginValidator extends PassValidator {
         '手机/邮箱格式不正确',
         /(^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$)|(^1[3|4|5|7|8]\d{9}$)/
       ),
+    ];
+    this.sid = [new Rule('isNotEmpty', '图形验证码 sid 不能为空')];
+    this.captcha = [
+      new Rule('isNotEmpty', '图形验证码不能为空'),
+      new Rule('isLength', '图形验证码长度为4', 4, 4),
     ];
   }
 }

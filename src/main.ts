@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-08 17:25:29
- * @LastEditTime: 2021-11-18 23:49:57
+ * @LastEditTime: 2021-12-16 18:04:28
  * @Description: main.ts
  */
 import Koa from 'koa';
@@ -16,7 +16,6 @@ import catchError from '@/middlewares/exception';
 import router from '@/core/routers';
 // import { query } from '@/utils/query';
 import { SERVICE } from '@/constant/config';
-
 const app = new Koa(); // 创建koa应用
 
 // 将常用方法注入ctx
