@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-11-08 15:27:46
- * @LastEditTime: 2021-11-22 15:19:58
+ * @LastEditTime: 2021-12-17 15:33:02
  * @Description:
  */
 const path = require('path');
@@ -15,6 +15,7 @@ const config = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, '../dist'),
   },
+  target: 'node',
   module: {
     rules: [
       {
