@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-03 21:21:54
- * @LastEditTime: 2021-08-17 15:57:08
+ * @LastEditTime: 2021-12-21 14:21:29
  * @Description: 配置文件
  */
 
@@ -33,7 +33,7 @@ export const ENV = 'dev';
 // 服务器配置
 export const SERVICE = {
   HOST: '',
-  PORT: '3000',
+  PORT: '50000',
 };
 // 接口地址配置
 export const API = {
