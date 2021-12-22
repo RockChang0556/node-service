@@ -1,11 +1,12 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-12-17 11:22:31
+ * @LastEditTime: 2021-12-22 16:20:04
  * @Description: 用户相关接口
  */
 
 import Router from 'koa-router';
+const { Op } = require('sequelize');
 import {
   SuccessResponse,
   ErrorResponse,
@@ -16,18 +17,18 @@ import {
 import { Auth } from '@/middlewares/auth';
 import { Validator } from '@/app/validators/demo';
 import {
+  AccountValidator,
   LoginValidator,
   RegisterValidator,
-  EmailValidator,
   EmailCodeValidator,
   UpdatePasswordValidator,
   GetUserValidator,
 } from '@/app/validators/user';
-import { userModels, formatUser } from '@/app/models/user';
 import { jwt, TokenType } from '@/utils/jwt';
 import { emailUtils, captchaCode } from '@/utils/email';
-import { ADMIN } from '@/constant/emun';
+import { ADMIN, ERR_CODE } from '@/constant/emun';
 import { API } from '@/constant/config';
+import { UserModel } from '@/app/model/user';
 
 const router = new Router();
 // 接口前缀
@@ -35,24 +36,34 @@ router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/user`);
 
 // 登陆
 router.post('/login', async ctx => {
-  const vs = await new LoginValidator().validate(ctx);
-  const { account, password, sid, captcha } = vs.get('body');
-  // 校验图形验证码
-  await captchaCode.verifyCode(sid, captcha);
-  const res = await userModels.getUser(account, ['email', 'phone']);
-  if (res.length) {
-    if (password === res[0].password) {
+  const vs = await new Validator().validate(ctx);
+  const { account, password, sid, captcha, register } = vs.get('body');
+  // 非注册自动登录的,校验图形验证码
+  if (!register) {
+    await new LoginValidator().validate(ctx);
+    await captchaCode.verifyCode(sid, captcha);
+  } else {
+    await new AccountValidator().validate(ctx);
+  }
+  const res = await UserModel.findOne({
+    where: {
+      [Op.or]: [{ email: account }, { phone: account }],
+    },
+  });
+  if (res) {
+    // todo: 加密存储密码
+    if (password === res.password) {
       const { accessToken: access_token, refreshToken: refresh_token } =
         jwt.getTokens({
-          id: res[0].id,
-          admin: Number(res[0].admin),
+          id: res.id,
+          admin: Number(res.admin),
         });
-      throw new DataResponse({ access_token, refresh_token }, '登录成功');
+      throw new DataResponse({ access_token, refresh_token }, ERR_CODE[1002]);
     } else {
-      throw new ErrorResponse('密码有误!');
+      throw new ErrorResponse(ERR_CODE[1003]);
     }
   } else {
-    throw new ErrorResponse('该账号未注册!');
+    throw new ErrorResponse(ERR_CODE[1004]);
   }
 });
 
@@ -64,14 +75,18 @@ router.get('/refresh', async (ctx: any) => {
       id: decode.id,
       admin: Number(decode.admin),
     });
-  throw new DataResponse({ access_token, refresh_token }, '令牌更新成功');
+  throw new DataResponse({ access_token, refresh_token }, ERR_CODE[4003]);
 });
 
 // 获取当前登录用户信息
 router.get('/current', new Auth().init, async (ctx: any) => {
   const user = ctx.user;
-  const res = await userModels.getUserById(user.id);
-  throw new DataResponse(res);
+  const res = await UserModel.getUser(user.id);
+  if (res) {
+    throw new DataResponse(res);
+  } else {
+    throw new AuthFailed(ERR_CODE[1000], 1000);
+  }
 });
 
 // 获取指定用户信息
@@ -80,19 +95,19 @@ router.get('/get_user', new Auth().init, async (ctx: any) => {
   const { id, email, phone } = vs.get('query');
   let res: any;
   if (id) {
-    res = await userModels.getUser(id, 'id'); // 查询人
+    res = await UserModel.getUser(id, 'id'); // 查询人
   } else if (email) {
-    res = await userModels.getUser(email, 'email'); // 查询人
+    res = await UserModel.getUser(email, 'email'); // 查询人
   } else if (phone) {
-    res = await userModels.getUser(phone, 'phone'); // 查询人
+    res = await UserModel.getUser(phone, 'phone'); // 查询人
   } else {
-    throw new ParamsErr('缺少查询条件', 4);
+    throw new ParamsErr(ERR_CODE[6], 6);
   }
   const user = ctx.user; // 当前登录人
   if (user.admin < res.admin) {
-    throw new AuthFailed('权限不足, 无法查看对方信息', 4102);
+    throw new AuthFailed(ERR_CODE[1001], 1001);
   } else {
-    throw new DataResponse(formatUser(res)[0]);
+    throw new DataResponse(res);
   }
 });
 
@@ -102,15 +117,15 @@ router.get('/has_user', async (ctx: any) => {
   const { id, email, phone } = vs.get('query');
   let res: any;
   if (id) {
-    res = await userModels.getUser(id, 'id'); // 查询人
+    res = await UserModel.getUser(id, 'id'); // 查询人
   } else if (email) {
-    res = await userModels.getUser(email, 'email'); // 查询人
+    res = await UserModel.getUser(email, 'email'); // 查询人
   } else if (phone) {
-    res = await userModels.getUser(phone, 'phone'); // 查询人
+    res = await UserModel.getUser(phone, 'phone'); // 查询人
   } else {
-    throw new ParamsErr('缺少查询条件', 4);
+    throw new ParamsErr(ERR_CODE[6], 6);
   }
-  throw new DataResponse({ has_user: !!res.length });
+  throw new DataResponse({ has_user: !!res });
 });
 
 // 注册
@@ -118,15 +133,15 @@ router.post('/register', async ctx => {
   const vs = await new RegisterValidator().validate(ctx);
   const { name, email, password, code } = vs.get('body');
   // 判断是否注册过
-  const registered = await userModels.getUser(email, 'email');
-  if (registered.length) throw new ErrorResponse('此账号已注册!');
+  const user = await UserModel.getUser(email, 'email');
+  if (user) throw new ErrorResponse(ERR_CODE[1005]);
   // 昵称是否重复
-  const named = await userModels.getUser(name, 'name');
-  if (named.length) throw new ErrorResponse('昵称已存在!');
+  const named = await UserModel.getUser(name, 'name');
+  if (named) throw new ErrorResponse(ERR_CODE[1006]);
   // 校验邮箱验证码
   await emailUtils.verifyCode(email, code);
   // 插入数据
-  await userModels.addUser({ name, email, password });
+  await UserModel.create({ name, email, password });
   throw new SuccessResponse();
 });
 
@@ -134,7 +149,7 @@ router.post('/register', async ctx => {
 router.post('/update', new Auth().init, async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const data = vs.get('body');
-  await userModels.updateUser(ctx.user.id, data);
+  await UserModel.update({ ...data }, { where: { id: ctx.user.id } });
   throw new SuccessResponse();
 });
 
@@ -143,7 +158,7 @@ router.post('/update_password', async (ctx: any) => {
   const vs = await new UpdatePasswordValidator().validate(ctx);
   const { email, code, password } = vs.get('body');
   await emailUtils.verifyCode(email, code);
-  await userModels.updatePassword(email, password);
+  await UserModel.update({ password }, { where: { email } });
   throw new SuccessResponse();
 });
 
@@ -152,14 +167,6 @@ router.post('/email/code', async ctx => {
   const vs = await new EmailCodeValidator().validate(ctx);
   const { email, reason } = vs.get('body');
   await emailUtils.sendCode(email, reason);
-});
-
-// 校验邮箱验证码
-router.post('/email/validate', async ctx => {
-  const vs = await new EmailValidator().validate(ctx);
-  const { email, code } = vs.get('body');
-  await emailUtils.verifyCode(email, code);
-  throw new SuccessResponse('验证码校验成功');
 });
 
 // 发送图形验证码
@@ -174,7 +181,7 @@ router.get('/getCaptcha', async ctx => {
 router.post('/list', new Auth(ADMIN.READ).init, async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const { querys, orders, pages } = vs.get('body');
-  const res: any = await userModels.getAll(querys, orders, pages);
+  const res: any = await UserModel.getAll(querys, orders, pages);
   throw new DataResponse(res);
 });
 

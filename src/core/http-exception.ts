@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-25 21:06:41
- * @LastEditTime: 2021-08-21 15:26:28
+ * @LastEditTime: 2021-12-22 14:18:28
  * @Description: 请求格式定义
  */
 
@@ -72,7 +72,7 @@ class ExpiredTokenException extends HttpException {
   constructor(message?: string, code?: number) {
     super();
     this.message = message || '令牌过期';
-    this.code = code || 4001;
+    this.code = code || 4000;
     this.status = 421;
   }
 }
@@ -80,7 +80,7 @@ class InvalidTokenException extends HttpException {
   constructor(message?: string, code?: number) {
     super();
     this.message = message || '令牌失效或损坏';
-    this.code = code || 4002;
+    this.code = code || 4001;
     this.status = 422;
   }
 }

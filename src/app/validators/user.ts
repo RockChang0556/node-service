@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-28 14:51:58
- * @LastEditTime: 2021-12-17 11:16:31
+ * @LastEditTime: 2021-12-22 16:06:24
  * @Description: 参数校验 - user
  */
 
@@ -53,10 +53,8 @@ class EmailValidator extends Validator {
   }
 }
 
-class LoginValidator extends PassValidator {
+class AccountValidator extends PassValidator {
   account: Rule[];
-  sid: Rule[];
-  captcha: Rule[];
   constructor() {
     super();
     this.account = [
@@ -67,6 +65,13 @@ class LoginValidator extends PassValidator {
         /(^(\w-*\.*)+@(\w-?)+(\.\w{2,})+$)|(^1[3|4|5|7|8]\d{9}$)/
       ),
     ];
+  }
+}
+class LoginValidator extends AccountValidator {
+  sid: Rule[];
+  captcha: Rule[];
+  constructor() {
+    super();
     this.sid = [new Rule('isNotEmpty', '图形验证码 sid 不能为空')];
     this.captcha = [
       new Rule('isNotEmpty', '图形验证码不能为空'),
@@ -134,6 +139,7 @@ class GetUserValidator extends Validator {
   }
 }
 export {
+  AccountValidator,
   LoginValidator,
   RegisterValidator,
   EmailValidator,

@@ -1,8 +1,8 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-12 10:20:19
- * @LastEditTime: 2021-12-17 11:34:44
- * @Description: 邮件类, 提供发送验证码等功能 code范围4100-4200
+ * @LastEditTime: 2021-12-22 16:40:23
+ * @Description: 邮件类, 提供发送验证码等功能
  */
 
 import nodemailer from 'nodemailer';
@@ -10,9 +10,8 @@ import smtpTransport from 'nodemailer-smtp-transport';
 import svgCaptcha from 'svg-captcha';
 import { EAMIL } from '@/constant/config';
 import { ErrorResponse, SuccessResponse } from '@/core/http-exception';
-import { User } from '@/app/models/user';
 import { redis } from './redis';
-const userModel = new User();
+import { ERR_CODE } from '@/constant/emun';
 
 class Email {
   private transport: any;
@@ -64,15 +63,10 @@ class Email {
     const success = await this.send(addressEmail, content, code);
     if (success) {
       // 执行验证码入库操作
-      const exp: number = Math.floor(Date.now() / 1000) + EAMIL.validExp;
-      await userModel.addEmailCode({
-        email: addressEmail,
-        code,
-        expire_time: new Date(exp * 1000),
-      });
-      throw new SuccessResponse('验证码发送成功');
+      await redis.set(addressEmail, code, EAMIL.validExp);
+      throw new SuccessResponse(ERR_CODE[4100]);
     } else {
-      throw new ErrorResponse('验证码发送失败', 4101);
+      throw new ErrorResponse(ERR_CODE[4101], 4101);
     }
   }
 
@@ -82,21 +76,14 @@ class Email {
    * @return {*}
    */
   async verifyCode(email: string, code: string) {
-    const res = await userModel.getEmailCode(email);
-    if (res.length) {
-      // 有没有过期
-      if (res[0].expire_time < Date.now()) {
-        await userModel.deleteEmailCode(email);
-        throw new ErrorResponse('验证码过期', 4102);
-      }
-      // 验证码是否正确
-      if (res[0].code !== code) throw new ErrorResponse('验证码校验失败', 4103);
-      // 校验成功, 删除库中数据
-      await userModel.deleteEmailCode(email);
+    const res = await redis.get(email);
+    if (res) {
+      // 图形验证码是否正确
+      if (res.toLowerCase() !== code.toLowerCase())
+        throw new ErrorResponse(ERR_CODE[4103], 4103);
       return true;
     } else {
-      await userModel.deleteEmailCode(email);
-      throw new ErrorResponse('验证码失效', 4104);
+      throw new ErrorResponse(ERR_CODE[4105], 4105);
     }
   }
 }
@@ -120,10 +107,10 @@ class CaptchaCode {
     if (res) {
       // 图形验证码是否正确
       if (res.toLowerCase() !== code.toLowerCase())
-        throw new ErrorResponse('验证码校验失败', 4103);
+        throw new ErrorResponse(ERR_CODE[4103], 4103);
       return true;
     } else {
-      throw new ErrorResponse('验证码失效, 请重新获取', 4104);
+      throw new ErrorResponse(ERR_CODE[4105], 4105);
     }
   }
 }

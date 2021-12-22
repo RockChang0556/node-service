@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 14:11:05
- * @LastEditTime: 2021-08-18 18:49:22
+ * @LastEditTime: 2021-12-22 17:07:05
  * @Description: 文件类, 提供文件上传功能
  *
  * 不用koa-body原因, 开发时候没有拿到上传成功的回调
@@ -13,8 +13,8 @@ import * as fs from 'fs';
 import * as crypto from 'crypto';
 import { ErrorResponse } from '@/core/http-exception';
 import { FILE } from '@/constant/config';
-import { File } from '@/app/models/file';
-const fileModel = new File();
+import { ERR_CODE } from '@/constant/emun';
+import { FileModel } from '@/app/model/fie';
 
 // 文件地址和文件名设置
 const storage = multer.diskStorage({
@@ -40,23 +40,26 @@ class FileUtil {
       .then(res => res)
       .catch(err => err);
     if (err) {
-      throw new ErrorResponse(err.message || '上传失败', 1001);
+      throw new ErrorResponse(err.message || ERR_CODE[1500], 1500);
     }
     const reqFile = ctx.file;
     if (!reqFile) {
-      throw new ErrorResponse('请传入文件', 1002);
+      throw new ErrorResponse(ERR_CODE[1501], 1501);
     }
     let file = {};
     const md5 = this.generateMd5(reqFile.path);
-    const res = await fileModel.getFile('md5', md5);
+    const res = await FileModel.findOne({
+      where: {
+        md5: md5,
+      },
+    });
     // 根据 md5判断文件是否存在数据库, 存在直接返回数据库存的信息, 不存在则插入数据库
-    if (res.length) {
-      file = res[0];
+    if (res) {
+      file = res;
     } else {
       file = {
         fieldname: reqFile.fieldname,
         encoding: reqFile.encoding,
-        destination: reqFile.destination,
         filename: reqFile.filename,
         filetype: reqFile.mimetype,
         originalname: reqFile.originalname,
@@ -65,7 +68,7 @@ class FileUtil {
         md5,
       };
       // 向数据库插入文件数据
-      await fileModel.addFile(file);
+      await FileModel.create(file);
     }
     return file;
   }
