@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-11 16:02:03
- * @LastEditTime: 2021-08-21 15:34:30
+ * @LastEditTime: 2021-12-22 14:51:55
  * @Description: 令牌类，提供令牌的生成和解析功能 code范围4000-4100
  * https://github.com/TaleLin/lin-cms-koa-core/blob/master/lib/jwt/jwt.ts
  */
@@ -15,6 +15,7 @@ import {
 import { RouterContext } from 'koa-router';
 import { get } from 'lodash';
 import { JWT } from '@/constant/config';
+import { ERR_CODE } from '@/constant/emun';
 
 interface tokenInfo {
   id: number; // 用户id
@@ -40,18 +41,6 @@ interface twoToken {
 export enum TokenType {
   ACCESS = 'access',
   REFRESH = 'refresh',
-}
-
-export enum TokenCode {
-  '令牌过期' = 4001,
-  '令牌失效或损坏' = 4002,
-  '令牌获取失败' = 4004,
-  '请使用正确类型的令牌' = 4005,
-  '请使用正确作用域的令牌' = 4006,
-  'access token 过期' = 4010,
-  'access token 损坏' = 4011,
-  'refresh token 过期' = 4020,
-  'refresh token 损坏' = 4021,
 }
 
 class Token {
@@ -155,7 +144,7 @@ class Token {
   parseHeader(ctx: RouterContext, type = TokenType.ACCESS): tokenProps {
     // 此处借鉴了koa-jwt
     if (!ctx.header || !ctx.header.authorization) {
-      throw new AuthFailed(TokenCode[4004], 4004);
+      throw new AuthFailed(ERR_CODE[4004], 4004); // 令牌获取失败
     }
     const parts = ctx.header.authorization.split(' ');
 
@@ -169,10 +158,10 @@ class Token {
         // @ts-ignore
         const obj = this.verifyToken(token, type);
         if (!get(obj, 'type') || get(obj, 'type') !== type) {
-          throw new AuthFailed(TokenCode[4005], 4005);
+          throw new AuthFailed(ERR_CODE[4005], 4005);
         }
         if (!get(obj, 'scope') || get(obj, 'scope') !== 'Rock') {
-          throw new AuthFailed(TokenCode[4006], 4006);
+          throw new AuthFailed(ERR_CODE[4006], 4006);
         }
         return obj;
       } else {
@@ -203,17 +192,17 @@ class Token {
     } catch (error) {
       if (error instanceof TokenExpiredError) {
         if (type === TokenType.ACCESS) {
-          throw new ExpiredTokenException(TokenCode[4010], 4010);
+          throw new ExpiredTokenException(ERR_CODE[4010], 4010);
         } else if (type === TokenType.REFRESH) {
-          throw new ExpiredTokenException(TokenCode[4020], 4020);
+          throw new ExpiredTokenException(ERR_CODE[4020], 4020);
         } else {
           throw new ExpiredTokenException();
         }
       } else {
         if (type === TokenType.ACCESS) {
-          throw new InvalidTokenException(TokenCode[4011], 4011);
+          throw new InvalidTokenException(ERR_CODE[4011], 4011);
         } else if (type === TokenType.REFRESH) {
-          throw new InvalidTokenException(TokenCode[4021], 4021);
+          throw new InvalidTokenException(ERR_CODE[4021], 4021);
         } else {
           throw new InvalidTokenException();
         }
