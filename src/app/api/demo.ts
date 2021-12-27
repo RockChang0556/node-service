@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-12-22 10:46:58
+ * @LastEditTime: 2021-12-27 17:50:20
  * @Description: 路由文件-demo
  */
 
@@ -20,7 +20,7 @@ router.get('/get', async ctx => {
   if (id) {
     ctx.body = ctx.request.query;
   } else {
-    throw new ParamsErr('id必填');
+    throw new ParamsErr('id必填!');
   }
 });
 
