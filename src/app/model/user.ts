@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2021-12-22 16:21:48
+ * @LastEditTime: 2021-12-27 13:13:07
  * @Description: 用户相关 model
  */
 import { sequelize } from '@/core/db';
@@ -128,7 +128,7 @@ UserModel.init(
   },
   {
     sequelize,
-    tableName: 'user2',
+    tableName: 'user',
   }
 );
 

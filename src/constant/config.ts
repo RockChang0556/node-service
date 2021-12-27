@@ -1,16 +1,16 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-03 21:21:54
- * @LastEditTime: 2021-12-21 17:24:53
+ * @LastEditTime: 2021-12-27 13:08:52
  * @Description: 配置文件
  */
 
 // 数据库连接配置
 export const DATABASE = {
   HOST: '106.52.242.121',
-  PORT: 4002,
+  PORT: 3306,
   DBNAME: 'base',
-  USER: 'root',
+  USER: 'rock',
   PASSWORD: 'zp123456',
   CONNECTION_LIMIT: 1000,
 };

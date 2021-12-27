@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-08 17:25:29
- * @LastEditTime: 2021-12-16 18:04:28
+ * @LastEditTime: 2021-12-27 15:09:04
  * @Description: main.ts
  */
 import Koa from 'koa';
@@ -53,7 +53,9 @@ if (!isDevMode) {
 
 // 初始化
 // new InitManager(app).init();
+
+const port = !isDevMode ? 4300 : SERVICE.PORT;
 // 启动服务
-app.listen(SERVICE.PORT, () => {
-  console.log(`应用已经启动，http://localhost:${SERVICE.PORT}`);
+app.listen(port, () => {
+  console.log(`应用已经启动，http://localhost:${port}`);
 });

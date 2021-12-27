@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2021-12-22 17:07:46
+ * @LastEditTime: 2021-12-27 13:10:16
  * @Description: 文件相关 model
  */
 import { sequelize } from '@/core/db';
@@ -52,7 +52,7 @@ FileModel.init(
   },
   {
     sequelize,
-    tableName: 'file2',
+    tableName: 'file',
   }
 );
 
