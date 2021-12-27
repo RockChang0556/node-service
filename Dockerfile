@@ -1,4 +1,4 @@
-FROM node:10 
+FROM node:17
 
 LABEL maintainer=peng0556@qq.com
 
