@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-12 10:20:19
- * @LastEditTime: 2021-12-22 16:40:23
+ * @LastEditTime: 2021-12-28 15:53:25
  * @Description: 邮件类, 提供发送验证码等功能
  */
 
@@ -96,7 +96,7 @@ class CaptchaCode {
       color: true,
       noise: Math.floor(Math.random() * 5),
       width: 120,
-      height: 40,
+      height: 50,
     });
     // 设置图片验证码超时10分钟
     await redis.set(sid, newCaptca.text, 10 * 60);
