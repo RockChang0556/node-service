@@ -1,11 +1,10 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-11 16:02:03
- * @LastEditTime: 2022-01-05 16:02:13
+ * @LastEditTime: 2022-01-05 19:37:23
  * @Description: 令牌类，提供令牌的生成和解析功能 code范围4000-4100
  * https://github.com/TaleLin/lin-cms-koa-core/blob/master/lib/jwt/jwt.ts
  */
-import Application from 'koa';
 import jwtGenerator, { TokenExpiredError } from 'jsonwebtoken';
 import {
   ExpiredTokenException,
@@ -44,48 +43,21 @@ export enum TokenType {
 }
 
 class Token {
-  /**
-   * 令牌的secret值，用于令牌的加密
-   */
+  // 令牌的secret值，用于令牌的加密
   private secret: string | undefined;
 
-  /**
-   * access token 默认的过期时间
-   */
+  // access token 默认的过期时间
   private accessExp: number = 60 * 60; // 1h;
 
-  /**
-   * refresh token 默认的过期时间
-   */
+  // refresh token 默认的过期时间
   private refreshExp: number = 60 * 60 * 24 * 30 * 3; // 3 months
 
-  /**
-   * 构造函数
-   * @param secret 牌的secret值
-   * @param accessExp access token 过期时间
-   * @param refreshExp refresh token 过期时间
-   */
   constructor(secret?: string, accessExp?: number, refreshExp?: number) {
     secret && (this.secret = secret);
     refreshExp && (this.refreshExp = refreshExp);
     accessExp && (this.accessExp = accessExp);
   }
 
-  /**
-   * 挂载到 ctx 上
-   */
-  initApp(
-    app: Application,
-    secret?: string,
-    accessExp?: number,
-    refreshExp?: number
-  ) {
-    // 将 jwt 实例挂到 app 的 context 上
-    app.context.jwt = this;
-    secret && (this.secret = secret);
-    refreshExp && (this.refreshExp = refreshExp);
-    accessExp && (this.accessExp = accessExp);
-  }
   /**
    * 生成两个token
    * @param {any} data 存储的信息

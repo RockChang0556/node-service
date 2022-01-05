@@ -1,13 +1,14 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-03 21:21:54
- * @LastEditTime: 2021-12-27 13:08:52
+ * @LastEditTime: 2022-01-05 19:01:04
  * @Description: 配置文件
  */
+import path from 'path';
 
 // 数据库连接配置
 export const DATABASE = {
-  HOST: '106.52.242.121',
+  HOST: process.env.NODE_ENV === 'production' ? '106.52.242.121' : '127.0.0.1',
   PORT: 3306,
   DBNAME: 'base',
   USER: 'rock',
@@ -51,5 +52,9 @@ export const PATH = {
 // 限制条件配置
 export const FILE = {
   UPLOAD_SIZE: 1024 * 1024 * 1, // 文件大小限制, 单位M
-  OUT_DIR: 'public/uploads/', // 文件存储位置
+  // 文件存储位置
+  OUT_DIR:
+    process.env.NODE_ENV === 'production'
+      ? '/app/public/uploads'
+      : path.resolve(__dirname, '../../public/uploads'),
 };

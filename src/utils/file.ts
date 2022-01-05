@@ -1,51 +1,32 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 14:11:05
- * @LastEditTime: 2021-12-22 17:07:05
+ * @LastEditTime: 2022-01-05 19:19:19
  * @Description: 文件类, 提供文件上传功能
  *
  * 不用koa-body原因, 开发时候没有拿到上传成功的回调
  * busboy
  */
 
-const multer = require('@koa/multer');
-import * as fs from 'fs';
-import * as crypto from 'crypto';
+import fs from 'fs';
+import crypto from 'crypto';
+import mkdir from 'make-dir';
+import moment from 'dayjs';
+import { v4 as uuidv4 } from 'uuid';
+
 import { ErrorResponse } from '@/core/http-exception';
-import { FILE } from '@/constant/config';
 import { ERR_CODE } from '@/constant/emun';
 import { FileModel } from '@/app/model/file';
-
-// 文件地址和文件名设置
-const storage = multer.diskStorage({
-  destination: FILE.OUT_DIR,
-  filename(ctx, file, cb) {
-    const filenameArr = file.originalname.split('.');
-    cb(null, Date.now() + '.' + filenameArr[filenameArr.length - 1]);
-  },
-});
-//文件上传限制
-const limits = {
-  fields: 10, //非文件字段的数量
-  fileSize: FILE.UPLOAD_SIZE, // 文件大小限制
-  files: 1, //文件数量
-};
-const upload = multer({ storage, limits });
+import { FILE } from '@/constant/config';
 
 class FileUtil {
   // 上传文件
-  async upload(ctx, next) {
-    let err = await upload
-      .single('file')(ctx, next)
-      .then(res => res)
-      .catch(err => err);
-    if (err) {
-      throw new ErrorResponse(err.message || ERR_CODE[1500], 1500);
-    }
-    const reqFile = ctx.file;
+  async upload(ctx) {
+    let reqFile = ctx.request.files?.file;
     if (!reqFile) {
       throw new ErrorResponse(ERR_CODE[1501], 1501);
     }
+
     let file = {};
     const md5 = this.generateMd5(reqFile.path);
     const res = await FileModel.findOne({
@@ -57,18 +38,18 @@ class FileUtil {
     if (res) {
       file = res;
     } else {
-      file = {
-        fieldname: reqFile.fieldname,
-        encoding: reqFile.encoding,
-        filename: reqFile.filename,
-        filetype: reqFile.mimetype,
-        originalname: reqFile.originalname,
-        path: `/uploads/${reqFile.filename}`,
+      // 写入文件
+      const { filePath, fileName } = await this.writeFile(reqFile);
+      const files = {
+        filename: fileName,
+        filetype: reqFile.type,
+        originalname: reqFile.name,
+        path: `/uploads${filePath}`,
         size: reqFile.size,
         md5,
       };
       // 向数据库插入文件数据
-      await FileModel.create(file);
+      file = await FileModel.create(files);
     }
     return file;
   }
@@ -78,6 +59,42 @@ class FileUtil {
     const hash = crypto.createHash('md5');
     const buffer = fs.readFileSync(path);
     return hash.update(buffer).digest('hex');
+  }
+  // 写入文件
+  async writeFile(reqFile) {
+    const ext = reqFile.name.split('.').pop();
+    const dir = `${FILE.OUT_DIR}/${moment().format('YYYYMMDD')}`;
+    // 判断目录是否存在, 不存在则创建
+    await mkdir(dir);
+    const filename = uuidv4();
+    const destPath = `${dir}/${filename}.${ext}`;
+
+    const read = fs.createReadStream(reqFile.path);
+    const upStream = fs.createWriteStream(destPath);
+
+    const fileSize = reqFile.size; // 文件大小
+    if (fileSize < 1 * 1024 * 1024) {
+      // 小于1M文件直接写入
+      read.pipe(upStream);
+    } else {
+      // 大文件采用读写流方式写入, 读取流默认 64k 一次
+      // let totalLen = 0;
+      read.on('data', chunk => {
+        // totalLen += chunk.length;
+        if (upStream.write(chunk) === false) {
+          read.pause();
+        }
+      });
+      read.on('drain', () => {
+        read.resume();
+      });
+      read.on('end', () => {
+        upStream.end();
+      });
+    }
+
+    const filePath = `/${moment().format('YYYYMMDD')}/${filename}.${ext}`;
+    return { filePath, fileName: `${filename}.${ext}` };
   }
 }
 

@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-05 16:10:35
+ * @LastEditTime: 2022-01-05 19:11:18
  * @Description: 文件相关 model
  */
 import { sequelize } from '@/core/db';
@@ -63,14 +63,6 @@ FileModel.init(
     md5: {
       type: Sequelize.STRING,
       comment: '文件的md5',
-    },
-    fieldname: {
-      type: Sequelize.STRING,
-      comment: '未知',
-    },
-    encoding: {
-      type: Sequelize.STRING,
-      comment: '未知',
     },
   },
   {

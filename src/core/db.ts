@@ -1,19 +1,17 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-27 23:06:11
- * @LastEditTime: 2022-01-05 16:17:51
+ * @LastEditTime: 2022-01-05 18:04:08
  * @Description: 数据库连接
  */
 import { DATABASE } from '@/constant/config';
 const { Sequelize } = require('sequelize');
 
 const { HOST, PORT, USER, PASSWORD, DBNAME } = DATABASE;
-// 开发环境连接本地数据库
-const host = process.env.NODE_ENV === 'production' ? HOST : '127.0.0.1';
 
 const sequelize = new Sequelize(DBNAME, USER, PASSWORD, {
   dialect: 'mysql',
-  host,
+  host: HOST,
   port: PORT,
   logging: false, // 执行sql时是否在控制台输出
   timezone: '+08:00',

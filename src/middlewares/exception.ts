@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-25 10:23:09
- * @LastEditTime: 2021-08-12 12:08:02
+ * @LastEditTime: 2022-01-05 19:32:12
  * @Description: 异常处理中间件 - 包含正确的数据
  */
 import { ENV } from '@/constant/config';

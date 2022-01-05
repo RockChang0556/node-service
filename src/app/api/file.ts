@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 10:12:10
- * @LastEditTime: 2022-01-05 16:11:36
+ * @LastEditTime: 2022-01-05 19:20:21
  * @Description: 文件相关接口
  */
 import fs from 'fs';
@@ -24,8 +24,8 @@ const router = new Router();
 router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/file`);
 
 // 上传文件
-router.post('/upload', new Auth().init, async (ctx: any, next) => {
-  const files: any = await file.upload(ctx, next);
+router.post('/upload', new Auth().init, async (ctx: any) => {
+  const files: any = await file.upload(ctx);
   delete files.md5;
   throw new DataResponse(files);
 });

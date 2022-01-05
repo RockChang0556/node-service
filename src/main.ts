@@ -1,12 +1,12 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-08 17:25:29
- * @LastEditTime: 2022-01-05 16:13:16
+ * @LastEditTime: 2022-01-05 19:34:26
  * @Description: main.ts
  */
 import Koa from 'koa';
+import koaBody from 'koa-body';
 import koaStatic from 'koa-static';
-import bodyParser from 'koa-bodyparser';
 import helmet from 'koa-helmet';
 import jsonutil from 'koa-json';
 import cors from '@koa/cors';
@@ -14,15 +14,10 @@ import compose from 'koa-compose';
 import compress from 'koa-compress';
 import catchError from '@/middlewares/exception';
 import router from '@/app/routers';
-// import { query } from '@/utils/query';
 import { SERVICE } from '@/constant/config';
-const app = new Koa(); // 创建koa应用
+import { ErrorResponse } from '@/core/http-exception';
 
-// 将常用方法注入ctx
-// app.use(async (ctx, next) => {
-//   ctx.execSql = query; // 查库方法
-//   await next();
-// });
+const app = new Koa(); // 创建koa应用
 
 /**
  * 使用koa-compose 集成中间件
@@ -31,7 +26,15 @@ const middleware = compose([
   // 全局异常
   catchError,
   // 参数解析
-  bodyParser(),
+  koaBody({
+    multipart: true,
+    formidable: {
+      keepExtensions: true, // 保留文件后缀
+    },
+    onError(err) {
+      throw new ErrorResponse(err.message);
+    },
+  }),
   // 静态资源
   koaStatic('public'),
   // 跨域处理
