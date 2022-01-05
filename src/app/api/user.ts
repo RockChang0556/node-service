@@ -1,9 +1,10 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2021-12-22 16:20:04
+ * @LastEditTime: 2022-01-05 17:26:47
  * @Description: 用户相关接口
  */
+import bcrypt from 'bcryptjs';
 
 import Router from 'koa-router';
 const { Op } = require('sequelize');
@@ -51,8 +52,9 @@ router.post('/login', async ctx => {
     },
   });
   if (res) {
-    // todo: 加密存储密码
-    if (password === res.password) {
+    // 校验密码 user.password === plainPassword
+    const correct = bcrypt.compareSync(password, res.password);
+    if (correct) {
       const { accessToken: access_token, refreshToken: refresh_token } =
         jwt.getTokens({
           id: res.id,

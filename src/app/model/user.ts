@@ -1,11 +1,12 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-05 16:07:49
+ * @LastEditTime: 2022-01-05 17:18:41
  * @Description: 用户相关 model
  */
-import { sequelize } from '@/core/db';
 const { Sequelize, Model } = require('sequelize');
+import bcrypt from 'bcryptjs';
+import { sequelize } from '@/core/db';
 
 class UserModel extends Model {
   static async getUserByOpenid(openid) {
@@ -89,6 +90,11 @@ UserModel.init(
     password: {
       type: Sequelize.STRING,
       comment: '用户密码',
+      set(val: string) {
+        const salt = bcrypt.genSaltSync(10);
+        const psw = bcrypt.hashSync(val, salt);
+        this.setDataValue('password', psw);
+      },
     },
     avatar_id: {
       type: Sequelize.STRING,
