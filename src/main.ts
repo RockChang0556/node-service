@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-08 17:25:29
- * @LastEditTime: 2021-12-27 15:09:04
+ * @LastEditTime: 2022-01-05 16:13:16
  * @Description: main.ts
  */
 import Koa from 'koa';
@@ -13,7 +13,7 @@ import cors from '@koa/cors';
 import compose from 'koa-compose';
 import compress from 'koa-compress';
 import catchError from '@/middlewares/exception';
-import router from '@/core/routers';
+import router from '@/app/routers';
 // import { query } from '@/utils/query';
 import { SERVICE } from '@/constant/config';
 const app = new Koa(); // 创建koa应用

@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 10:12:10
- * @LastEditTime: 2021-11-18 23:44:29
+ * @LastEditTime: 2022-01-05 16:11:36
  * @Description: 文件相关接口
  */
 import fs from 'fs';
@@ -16,8 +16,8 @@ import { PositiveIntValidator, Validator } from '@/app/validators/demo';
 import { ADMIN } from '@/constant/emun';
 import { file } from '@/utils/file';
 import { API } from '@/constant/config';
-import { fileModels } from '@/app/models/file';
-import { userModels } from '@/app/models/user';
+import { FileModel } from '@/app/model/file';
+import { UserModel } from '@/app/model/user';
 
 const router = new Router();
 // 接口前缀
@@ -34,7 +34,7 @@ router.post('/upload', new Auth().init, async (ctx: any, next) => {
 router.get('/getfile', new Auth().init, async (ctx: any) => {
   const vs = await new PositiveIntValidator().validate(ctx);
   const { id } = vs.get('query');
-  const res: any = await fileModels.getFile('id', id);
+  const res: any = await FileModel.getOne(id);
   if (!res.length) {
     throw new ErrorResponse('获取文件信息失败!');
   } else {
@@ -48,14 +48,14 @@ router.get('/getfile', new Auth().init, async (ctx: any) => {
 router.post('/list', new Auth(ADMIN.READ).init, async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const { querys, orders, pages } = vs.get('body');
-  const res: any = await fileModels.getAll(querys, orders, pages);
+  const res: any = await FileModel.getAll(querys, orders, pages);
   throw new DataResponse(res);
 });
 
 // 清理文件 - 删除非用户头像文件
 router.get('/resetAvatar', new Auth(ADMIN.SUPER).init, async () => {
   // 所有用户头像
-  let avatarUrls: any = await userModels.getAllPath();
+  let avatarUrls: any = await UserModel.getAllPath();
   avatarUrls = avatarUrls.filter(v => v.avatar_url);
   // 读取本地文件
   const files = fs.readdirSync('public/uploads');
@@ -68,7 +68,7 @@ router.get('/resetAvatar', new Auth(ADMIN.SUPER).init, async () => {
       // 不是用户头像, 删除本地文件
       fs.unlinkSync(`public${path}`);
       // 删除数据库记录
-      await fileModels.deleteFile(path);
+      // await fileModels.deleteFile(path);
     }
   });
   throw new SuccessResponse();

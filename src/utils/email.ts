@@ -10,7 +10,7 @@ import smtpTransport from 'nodemailer-smtp-transport';
 import svgCaptcha from 'svg-captcha';
 import { EAMIL } from '@/constant/config';
 import { ErrorResponse, SuccessResponse } from '@/core/http-exception';
-import { redis } from './redis';
+import { redis } from '../core/redis';
 import { ERR_CODE } from '@/constant/emun';
 
 class Email {

@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2021-12-27 13:13:07
+ * @LastEditTime: 2022-01-05 16:07:49
  * @Description: 用户相关 model
  */
 import { sequelize } from '@/core/db';
@@ -41,6 +41,10 @@ class UserModel extends Model {
     // 分页参数兼容性处理
     // const page_index = (pages?.page_index > 1 && pages.page_index) || 1;
     // const page_size = (pages?.page_size > 1 && pages.page_size) || 10; // page_size存在并且大于1,取page_size,否则取10
+    const user = await UserModel.findAll();
+    return user;
+  }
+  static async getAllPath() {
     const user = await UserModel.findAll();
     return user;
   }

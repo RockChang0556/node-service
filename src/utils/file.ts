@@ -14,7 +14,7 @@ import * as crypto from 'crypto';
 import { ErrorResponse } from '@/core/http-exception';
 import { FILE } from '@/constant/config';
 import { ERR_CODE } from '@/constant/emun';
-import { FileModel } from '@/app/model/fie';
+import { FileModel } from '@/app/model/file';
 
 // 文件地址和文件名设置
 const storage = multer.diskStorage({

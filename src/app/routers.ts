@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-11-18 23:25:15
- * @LastEditTime: 2021-11-18 23:35:14
+ * @LastEditTime: 2022-01-05 16:03:07
  * @Description: 路由整合
  */
 import combineRoutes from 'koa-combine-routers';

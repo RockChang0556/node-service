@@ -1,13 +1,36 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2021-12-27 13:10:16
+ * @LastEditTime: 2022-01-05 16:10:35
  * @Description: 文件相关 model
  */
 import { sequelize } from '@/core/db';
 const { Sequelize, Model } = require('sequelize');
 
-class FileModel extends Model {}
+class FileModel extends Model {
+  /**
+   * 根据key和val查用户信息
+   * @param {*} val 值
+   * @param {string|string[]} key 查找的key
+   */
+  static async getOne(val: any, key: string = 'id') {
+    const user = await FileModel.findOne({
+      where: {
+        [key]: val,
+      },
+      attributes: { exclude: ['password'] },
+    });
+    return user;
+  }
+  static async getAll(querys = {}, orders = {}, pages) {
+    console.log('getAll', { querys, orders, pages });
+    // 分页参数兼容性处理
+    // const page_index = (pages?.page_index > 1 && pages.page_index) || 1;
+    // const page_size = (pages?.page_size > 1 && pages.page_size) || 10; // page_size存在并且大于1,取page_size,否则取10
+    const user = await FileModel.findAll();
+    return user;
+  }
+}
 
 FileModel.init(
   {

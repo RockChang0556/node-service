@@ -1,17 +1,19 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-27 23:06:11
- * @LastEditTime: 2021-12-22 11:52:01
+ * @LastEditTime: 2022-01-05 16:17:51
  * @Description: 数据库连接
  */
 import { DATABASE } from '@/constant/config';
-import { clone, unset } from 'lodash';
-const { Sequelize, Model } = require('sequelize');
+const { Sequelize } = require('sequelize');
 
 const { HOST, PORT, USER, PASSWORD, DBNAME } = DATABASE;
+// 开发环境连接本地数据库
+const host = process.env.NODE_ENV === 'production' ? HOST : '127.0.0.1';
+
 const sequelize = new Sequelize(DBNAME, USER, PASSWORD, {
   dialect: 'mysql',
-  host: HOST,
+  host,
   port: PORT,
   logging: false, // 执行sql时是否在控制台输出
   timezone: '+08:00',
@@ -38,19 +40,6 @@ const sequelize = new Sequelize(DBNAME, USER, PASSWORD, {
 sequelize.sync({
   force: false, // 如果表不存在,则创建该表(如果已经存在,则不执行任何操作)
 });
-Model.prototype.toJSON = function () {
-  // let data = this.dataValues
-  let data = clone(this.dataValues);
-  // unset(data, 'created_at');
-  // unset(data, 'deleted_at');
-
-  // if (isArray(this.exclude)) {
-  //   this.exclude.forEach(value => {
-  //     unset(data, value);
-  //   });
-  // }
-  return data;
-};
 
 sequelize
   .authenticate()

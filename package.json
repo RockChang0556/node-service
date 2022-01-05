@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "nodemon --exec ts-node -r tsconfig-paths/register ./src/main.ts --files",
     "build": "cross-env NODE_ENV=prod webpack --config config/webpack.config.prod.js",
-    "preview": "nodemon ./dist/bundle.js"
+    "preview": "nodemon ./dist/bundle.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Rock Chang",
   "license": "ISC",
