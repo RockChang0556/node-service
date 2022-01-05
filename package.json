@@ -13,7 +13,6 @@
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "bcryptjs": "^2.4.3",
-    "crypto": "^1.0.1",
     "dayjs": "^1.10.7",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.13.1",
@@ -39,11 +38,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.16.0",
+    "@babel/eslint-parser": "^7.16.5",
     "@babel/preset-env": "^7.16.0",
     "@types/koa": "^2.13.1",
     "@types/koa-router": "^7.4.2",
     "@types/mysql": "^2.15.18",
-    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
     "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.19.1",

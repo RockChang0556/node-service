@@ -9,7 +9,7 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',

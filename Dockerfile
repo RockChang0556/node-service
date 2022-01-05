@@ -1,4 +1,4 @@
-FROM node:14.17.4-alpine
+FROM node:17.3.0-alpine
 
 LABEL maintainer=peng0556@qq.com
 
