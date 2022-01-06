@@ -1,11 +1,11 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-05 19:11:18
+ * @LastEditTime: 2022-01-06 11:39:30
  * @Description: 文件相关 model
  */
 import { sequelize } from '@/core/db';
-const { Sequelize, Model } = require('sequelize');
+import Sequelize, { Model } from 'sequelize';
 
 class FileModel extends Model {
   /**
@@ -13,7 +13,7 @@ class FileModel extends Model {
    * @param {*} val 值
    * @param {string|string[]} key 查找的key
    */
-  static async getOne(val: any, key: string = 'id') {
+  static async getOne(val: any, key = 'id') {
     const user = await FileModel.findOne({
       where: {
         [key]: val,

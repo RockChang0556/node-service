@@ -1,13 +1,13 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2022-01-05 17:26:47
+ * @LastEditTime: 2022-01-06 11:40:08
  * @Description: 用户相关接口
  */
 import bcrypt from 'bcryptjs';
 
 import Router from 'koa-router';
-const { Op } = require('sequelize');
+import { Op } from 'sequelize';
 import {
   SuccessResponse,
   ErrorResponse,
@@ -46,7 +46,7 @@ router.post('/login', async ctx => {
   } else {
     await new AccountValidator().validate(ctx);
   }
-  const res = await UserModel.findOne({
+  const res: any = await UserModel.findOne({
     where: {
       [Op.or]: [{ email: account }, { phone: account }],
     },

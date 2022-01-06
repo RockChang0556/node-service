@@ -2,16 +2,16 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es6: true,
+    es2021: true,
   },
-  extends: ['prettier', 'eslint:recommended'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 13,
     sourceType: 'module',
   },
-  parser: '@babel/eslint-parser',
+  plugins: ['@typescript-eslint'],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
   },
 };

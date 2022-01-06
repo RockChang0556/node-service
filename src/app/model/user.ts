@@ -1,10 +1,10 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-05 17:18:41
+ * @LastEditTime: 2022-01-06 11:39:25
  * @Description: 用户相关 model
  */
-const { Sequelize, Model } = require('sequelize');
+import Sequelize, { Model } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import { sequelize } from '@/core/db';
 
@@ -22,7 +22,7 @@ class UserModel extends Model {
    * @param {*} val 值
    * @param {string|string[]} key 查找的key
    */
-  static async getUser(val: any, key: string = 'id') {
+  static async getUser(val: any, key = 'id') {
     const user = await UserModel.findOne({
       where: {
         [key]: val,
