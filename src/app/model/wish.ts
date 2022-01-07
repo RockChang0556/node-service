@@ -1,11 +1,12 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-07 11:15:58
+ * @LastEditTime: 2022-01-07 11:42:09
  * @Description: 文件相关 model
  */
 import { sequelize } from '@/core/db';
 import { ordersProp, pagesProp, querysProp } from '@/types/query';
+import { formatQ2S } from '@/utils/utils';
 import Sequelize, { Model, Op } from 'sequelize';
 
 class WishModel extends Model {
@@ -20,39 +21,30 @@ class WishModel extends Model {
     });
     return getRes;
   }
+
+  /** 分页模糊查询当前用户名下所有数据
+   * @param {*}
+   * @return {*}
+   */
   static async getAll(
     uid: number,
     pages?: pagesProp,
     querys?: querysProp,
     orders?: ordersProp
   ) {
-    // 分页参数兼容性处理
-    const page_index = (pages?.page_index > 1 && pages.page_index) || 1;
-    const page_size = (pages?.page_size > 1 && pages.page_size) || 10; // page_size存在并且大于1,取page_size,否则取10
+    const { query, order, offset, limit } = formatQ2S(pages, querys, orders);
     // 查询参数处理
     const where: any[] = [{ uid: uid }];
-    if (querys) {
-      const queryss = Object.keys(querys).map((v: string) => {
-        return { [v]: { [Op.substring]: querys[v] } };
-      });
-      where.push(...queryss);
-    }
-    // 排序处理
-    const order = [];
-    if (orders) {
-      const orderss = Object.keys(orders).map((v: string) => {
-        const o = orders[v] === 'desc' ? 'desc' : 'asc';
-        return [v, o];
-      });
-      order.push(orderss[0]);
+    if (query) {
+      where.push(...query);
     }
     const res = await WishModel.findAndCountAll({
       where: {
         [Op.and]: where,
       },
-      order: order,
-      offset: (page_index - 1) * page_size,
-      limit: page_size,
+      order,
+      offset,
+      limit,
       // attributes: { exclude: ['deleted_at'] },
     });
     return res;
