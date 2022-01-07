@@ -1,10 +1,10 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-06 12:01:19
+ * @LastEditTime: 2022-01-07 15:03:40
  * @Description: 用户相关 model
  */
-import Sequelize, { Model } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';
 import { sequelize } from '@/core/db';
 
@@ -52,7 +52,7 @@ class UserModel extends Model {
 }
 
 // id: {
-//   type: Sequelize.INTEGER,
+//   type: DataTypes.INTEGER,
 //   primaryKey: true, // 主键
 //   autoIncrement: true, // 自增
 //   unique: true, // 唯一
@@ -65,18 +65,18 @@ class UserModel extends Model {
 UserModel.init(
   {
     id: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true, // 主键
       autoIncrement: true, // 自增
       comment: '用户id,唯一,自增',
     },
     name: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       unique: true,
       comment: '用户name,唯一',
     },
     email: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       unique: true,
       validate: {
         isEmail: true,
@@ -84,12 +84,12 @@ UserModel.init(
       comment: '用户email,唯一',
     },
     phone: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       unique: true,
       comment: '用户phone,唯一',
     },
     password: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '用户密码',
       set(val: string) {
         const salt = bcrypt.genSaltSync(10);
@@ -98,28 +98,28 @@ UserModel.init(
       },
     },
     avatar_id: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '用户头像id',
     },
     avatar_url: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '用户头像url',
     },
     admin: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
       comment: '用户级别,0普通用户，1只读，2可编辑，3可删除，5超管',
     },
     position: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '职位',
     },
     summary: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '个人简介',
     },
     sex: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       defaultValue: -1,
       validate: {
         isIn: [[-1, 0, 1]], // 检查值是其中之一
@@ -127,12 +127,12 @@ UserModel.init(
       comment: '性别，-1-保密，0-女， 1-男',
     },
     favs: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
       comment: '用户积分',
     },
     sign_count: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       defaultValue: 0,
       comment: '签到次数',
     },

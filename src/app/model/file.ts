@@ -1,11 +1,11 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-06 11:39:30
+ * @LastEditTime: 2022-01-07 15:02:32
  * @Description: 文件相关 model
  */
 import { sequelize } from '@/core/db';
-import Sequelize, { Model } from 'sequelize';
+import { Model, DataTypes } from 'sequelize';
 
 class FileModel extends Model {
   /**
@@ -35,33 +35,33 @@ class FileModel extends Model {
 FileModel.init(
   {
     id: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true, // 主键
       autoIncrement: true, // 自增
       comment: 'id,唯一,自增',
     },
     filename: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '文件名字',
     },
     filetype: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '文件类型',
     },
     originalname: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '文件原始名字， 上传前的名字',
     },
     path: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '文件地址',
     },
     size: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       comment: '文件大小',
     },
     md5: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '文件的md5',
     },
   },

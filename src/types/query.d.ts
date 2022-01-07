@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 14:48:46
- * @LastEditTime: 2022-01-07 10:44:46
+ * @LastEditTime: 2022-01-07 13:14:15
  * @Description: 接口参数定义
  */
 
@@ -17,6 +17,12 @@ export interface querysProp {
 // 排序参数 [key] 排序字段 : 'desc'-从大到小 | 'asc'-从小到大
 export interface ordersProp {
   [x: string]: 'desc' | 'asc';
+}
+// 分页, 模糊查询, 排序 公共参数
+export interface pqoParamsProp {
+  pages?: pagesProp;
+  querys?: querysProp;
+  orders?: ordersProp;
 }
 
 export interface objProp {

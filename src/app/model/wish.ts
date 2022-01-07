@@ -1,19 +1,19 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-07 11:42:09
- * @Description: 文件相关 model
+ * @LastEditTime: 2022-01-07 15:04:02
+ * @Description: chang/心愿单相关 model
  */
 import { sequelize } from '@/core/db';
-import { ordersProp, pagesProp, querysProp } from '@/types/query';
+import { objProp, pqoParamsProp } from '@/types/query';
 import { formatQ2S } from '@/utils/utils';
-import Sequelize, { Model, Op } from 'sequelize';
+import { Model, Op, DataTypes } from 'sequelize';
 
 class WishModel extends Model {
   /**
-   * 根据key和val查用户信息
+   * and 查询
+   * 如参数是 {a: 1, b: 2}, 会查询 a=1&b=2 的数据
    * @param {*} val 值
-   * @param {string|string[]} key 查找的key
    */
   static async getOne(obj) {
     const getRes = await WishModel.findOne({
@@ -22,19 +22,14 @@ class WishModel extends Model {
     return getRes;
   }
 
-  /** 分页模糊查询当前用户名下所有数据
-   * @param {*}
-   * @return {*}
+  /** 分页模糊查询所有数据
+   * @param {*} querys 查询公共参数
+   * @return {*} obj 其他 where 限制参数
    */
-  static async getAll(
-    uid: number,
-    pages?: pagesProp,
-    querys?: querysProp,
-    orders?: ordersProp
-  ) {
-    const { query, order, offset, limit } = formatQ2S(pages, querys, orders);
+  static async getAll(querys: pqoParamsProp, obj: objProp) {
+    const { query, order, offset, limit } = formatQ2S(querys);
     // 查询参数处理
-    const where: any[] = [{ uid: uid }];
+    const where: any[] = obj ? [obj] : [];
     if (query) {
       where.push(...query);
     }
@@ -54,30 +49,29 @@ class WishModel extends Model {
 WishModel.init(
   {
     id: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true, // 主键
       autoIncrement: true, // 自增
       comment: 'id,唯一,自增',
     },
     uid: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '创建者id',
     },
     name: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '心愿单名称',
     },
     summary: {
-      type: Sequelize.TEXT,
-      defaultValue: '暂无描述',
+      type: DataTypes.TEXT,
       comment: '心愿单描述',
     },
     tag: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       comment: '标签，逗号分隔',
     },
     food_list: {
-      type: Sequelize.TEXT,
+      type: DataTypes.TEXT,
       comment: '菜品id列表',
     },
   },

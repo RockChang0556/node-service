@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-27 23:06:11
- * @LastEditTime: 2022-01-06 14:18:10
+ * @LastEditTime: 2022-01-07 15:51:22
  * @Description: 数据库连接
  */
 import { DATABASE } from '@/constant/config';
@@ -15,7 +15,7 @@ const sequelize = new Sequelize(DBNAME, USER, PASSWORD, {
   port: PORT,
   // logging: false, // 执行sql时是否在控制台输出
   timezone: '+08:00',
-  query: { raw: true }, // 只查询dataValues
+  // query: { raw: true }, // 只查询dataValues
   define: {
     //create_time  update_time delete_time
     timestamps: true,
