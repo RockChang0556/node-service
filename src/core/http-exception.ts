@@ -1,15 +1,15 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-25 21:06:41
- * @LastEditTime: 2021-12-22 14:18:28
+ * @LastEditTime: 2022-01-06 17:54:13
  * @Description: 请求格式定义
  */
 
 // 基类
 class HttpException extends Error {
-  code: number = -1;
-  message: string = '服务器异常';
-  status: number = 500;
+  code = -1;
+  message = '服务器异常';
+  status = 500;
   data: {
     [key: string]: any[];
   };

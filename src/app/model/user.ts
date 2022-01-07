@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-06 11:39:25
+ * @LastEditTime: 2022-01-06 12:01:19
  * @Description: 用户相关 model
  */
 import Sequelize, { Model } from 'sequelize';
@@ -56,6 +56,7 @@ class UserModel extends Model {
 //   primaryKey: true, // 主键
 //   autoIncrement: true, // 自增
 //   unique: true, // 唯一
+//   defaultValue: 0, // 默认值
 //   comment: '这是备注',
 //   validate: { // 校验 https://github.com/demopark/sequelize-docs-Zh-CN/blob/master/core-concepts/validations-and-constraints.md#%E9%AA%8C%E8%AF%81%E5%99%A8
 //     is: /^[a-z]+$/i,

@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2022-01-06 11:40:08
+ * @LastEditTime: 2022-01-06 17:57:45
  * @Description: 用户相关接口
  */
 import bcrypt from 'bcryptjs';
