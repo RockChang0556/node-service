@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-07 12:17:03
+ * @LastEditTime: 2022-01-08 12:06:15
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -12,9 +12,9 @@ import {
   ErrorResponse,
 } from '@/core/http-exception';
 import { PositiveIntValidator, Validator } from '@/app/validators/demo';
-import { ADMIN } from '@/constant/emun';
 import { API } from '@/constant/config';
 import { WishModel } from '@/app/model/wish';
+import { FoodModel } from '@/app/model/food';
 import { ERR_CODE } from '@/constant/emun';
 import { removeEmpty } from '@/utils/utils';
 
@@ -97,8 +97,23 @@ router.post('/list', new Auth().init, async (ctx: any) => {
 });
 
 // 获取心愿单详情
-router.get('/:id', new Auth(ADMIN.READ).init, async (ctx: any) => {
-  throw new DataResponse(ctx);
+router.get('/:id', new Auth().init, async (ctx: any) => {
+  const vs = await new PositiveIntValidator().validate(ctx);
+  const { id } = vs.get('path');
+  const wishRes: any = await WishModel.findByPk(id);
+  // 获取心愿单详情失败
+  if (!wishRes) throw new ErrorResponse(ERR_CODE[5000]);
+  // 心愿单下没有菜品, 直接返回
+  if (!wishRes.food_list) {
+    throw new DataResponse(wishRes);
+  } else {
+    // 获取菜品详情
+    const foodRes = await FoodModel.findAll({
+      where: { id: wishRes.food_list.split(',') },
+    });
+    wishRes.food_list = foodRes;
+    throw new DataResponse(wishRes);
+  }
 });
 
 export default router;
