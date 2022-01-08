@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-07 15:52:20
+ * @LastEditTime: 2022-01-08 20:24:00
  * @Description: chang/菜单相关 model
  */
 import { sequelize } from '@/core/db';
@@ -54,8 +54,8 @@ FoodModel.init(
       comment: 'id,唯一,自增',
     },
     uid: {
-      type: DataTypes.STRING,
-      defaultValue: '1',
+      type: DataTypes.INTEGER,
+      defaultValue: 1,
       comment: '创建者id',
     },
     name: {

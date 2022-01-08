@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-08 12:06:15
+ * @LastEditTime: 2022-01-08 21:21:47
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -65,12 +65,12 @@ router.put('/:id', new Auth().init, async (ctx: any) => {
   const { name, summary, tag, food_list } = vs.get('body');
   const data = removeEmpty({ name, summary, tag, food_list }); // 去除值为null|undefined的属性
   const user = ctx.user;
-  // 判断要删除的是否存在
-  const deleteRes = await WishModel.getOne({
+  // 判断要更新的是否存在
+  const getRes = await WishModel.getOne({
     uid: user.id,
     id,
   });
-  if (!deleteRes) throw new ErrorResponse(ERR_CODE[7]);
+  if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
   // 更新
   const updateRes = await WishModel.update(data, {
     where: { id },
@@ -113,6 +113,66 @@ router.get('/:id', new Auth().init, async (ctx: any) => {
     });
     wishRes.food_list = foodRes;
     throw new DataResponse(wishRes);
+  }
+});
+
+// 添加心愿单下菜品
+router.put('/:id/addfood', new Auth().init, async (ctx: any) => {
+  const vs = await new PositiveIntValidator().validate(ctx);
+  const { id } = vs.get('path');
+  const { food_ids } = vs.get('body');
+  const user = ctx.user;
+  // 判断要更新的是否存在
+  const getRes: any = await WishModel.getOne({
+    uid: user.id,
+    id,
+  });
+  if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
+  // 合并并去重
+  let food_list = getRes.food_list ? getRes.food_list.split(',') : [];
+  food_list = [...new Set([...food_list, ...food_ids])];
+  // 更新
+  const updateRes = await WishModel.update(
+    { food_list: food_list.join(',') },
+    {
+      where: { id },
+    }
+  );
+  if (updateRes[0] > 0) {
+    // 更新成功
+    throw new SuccessResponse();
+  } else {
+    new ErrorResponse(ERR_CODE[8]);
+  }
+});
+
+// 删除心愿单下菜品
+router.put('/:id/deletefood', new Auth().init, async (ctx: any) => {
+  const vs = await new PositiveIntValidator().validate(ctx);
+  const { id } = vs.get('path');
+  const { food_ids } = vs.get('body');
+  const user = ctx.user;
+  // 判断要更新的是否存在
+  const getRes: any = await WishModel.getOne({
+    uid: user.id,
+    id,
+  });
+  if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
+  // 过滤
+  let food_list: string[] = getRes.food_list ? getRes.food_list.split(',') : [];
+  food_list = food_list.filter((v: string) => !food_ids.includes(v));
+  // 更新
+  const updateRes = await WishModel.update(
+    { food_list: food_list.join(',') },
+    {
+      where: { id },
+    }
+  );
+  if (updateRes[0] > 0) {
+    // 更新成功
+    throw new SuccessResponse();
+  } else {
+    new ErrorResponse(ERR_CODE[8]);
   }
 });
 

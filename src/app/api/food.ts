@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-07 14:51:33
+ * @LastEditTime: 2022-01-08 20:34:01
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -37,13 +37,6 @@ router.post('/add', new Auth().init, async (ctx: any) => {
     material,
     process,
   } = vs.get('body');
-  // 判断要新增的是否存在
-  if (id) {
-    const AddRes = await FoodModel.getOne({
-      id,
-    });
-    if (AddRes) throw new ErrorResponse(ERR_CODE[5100]);
-  }
   const data = removeEmpty({
     id,
     name,
@@ -56,6 +49,17 @@ router.post('/add', new Auth().init, async (ctx: any) => {
     material,
     process,
   });
+  // 存在id说明是jd的数据, 默认创建者1, 没有 id 则带上 uid
+  if (id) {
+    // 判断要新增的是否存在
+    const AddRes = await FoodModel.getOne({
+      id,
+    });
+    if (AddRes) throw new DataResponse(AddRes);
+    // if (AddRes) throw new ErrorResponse(ERR_CODE[5100]);
+  } else {
+    data.uid = ctx.user.id;
+  }
   const res = await FoodModel.create(data);
   throw new DataResponse(res);
 });
