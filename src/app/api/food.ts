@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-09 20:15:14
+ * @LastEditTime: 2022-01-09 22:12:46
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -56,6 +56,8 @@ router.post('/add', new Auth().init, async (ctx: any) => {
       id,
     });
     if (AddRes) throw new DataResponse(AddRes);
+    // jd的数据 tag为string, 需转换为数组
+    data.tag = tag ? (typeof tag === 'string' ? tag.split(',') : tag) : [];
     // if (AddRes) throw new ErrorResponse(ERR_CODE[5100]);
   } else {
     data.uid = ctx.user.id;

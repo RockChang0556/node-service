@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-09 14:15:22
+ * @LastEditTime: 2022-01-09 22:04:42
  * @Description: chang/心愿单相关 model
  */
 import { Model, Op, DataTypes } from 'sequelize';
@@ -70,7 +70,8 @@ WishModel.init(
       type: DataTypes.STRING,
       comment: '标签，逗号分隔',
       set(val: string[]) {
-        this.setDataValue('tag', val.join(','));
+        const value = val?.length ? val : [];
+        this.setDataValue('tag', value.join(','));
       },
       get() {
         const rawValue = this.getDataValue('tag');

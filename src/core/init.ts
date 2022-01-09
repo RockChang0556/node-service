@@ -26,7 +26,7 @@ class InitManager {
     // 读取 / app / api文件夹中的文件;
     fs.readdirSync(path.join(__dirname, '../app/api')).forEach(file => {
       if (new RegExp('\\.(ts|js)$', 'i').test(file)) {
-        let controller = require(path.join(__dirname, '../app/api', file));
+        const controller = require(path.join(__dirname, '../app/api', file));
         // 为接口设置通用前缀
         router.use(
           `${projectApiPrefix}`,
