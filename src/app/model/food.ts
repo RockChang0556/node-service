@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-08 20:24:00
+ * @LastEditTime: 2022-01-09 13:32:13
  * @Description: chang/菜单相关 model
  */
 import { sequelize } from '@/core/db';
@@ -86,6 +86,13 @@ FoodModel.init(
     tag: {
       type: DataTypes.STRING,
       comment: '标签，逗号分隔,如 ‘减肥,家常菜,排毒,补钙’',
+      set(val: string[]) {
+        this.setDataValue('tag', val.join(','));
+      },
+      get() {
+        const rawValue = this.getDataValue('tag');
+        return rawValue ? rawValue.split(',') : [];
+      },
     },
     material: {
       type: DataTypes.TEXT,
