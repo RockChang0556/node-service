@@ -25,19 +25,6 @@ const codeRule = [
   new Rule('matches', '验证码为4位数字', /^[0-9]{4}$/),
 ];
 
-// 确认密码验证
-// const confirmPasswordRule = data => {
-//   if (!data.body.password || !data.body.confirm_password) {
-//     return [false, '两次输入的密码不一致，请重新输入'];
-//   }
-//   let ok = data.body.password === data.body.confirm_password;
-//   if (ok) {
-//     return ok;
-//   } else {
-//     return [false, '两次输入的密码不一致，请重新输入'];
-//   }
-// };
-
 class PassValidator extends Validator {
   password: Rule[];
   constructor() {
@@ -112,10 +99,6 @@ class UpdatePasswordValidator extends PassValidator {
     this.email = emailRule;
     // this.confirm_password = new Rule('isNotEmpty', '确认密码不可为空');
   }
-  // 自定义规则函数, 必须 validate 开头
-  // validateConfirmPassword(data) {
-  //   confirmPasswordRule(data);
-  // }
 }
 
 class GetUserValidator extends Validator {

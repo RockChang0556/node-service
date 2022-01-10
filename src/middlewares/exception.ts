@@ -1,10 +1,10 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-25 10:23:09
- * @LastEditTime: 2022-01-05 19:32:12
+ * @LastEditTime: 2022-01-10 11:21:56
  * @Description: 异常处理中间件 - 包含正确的数据
  */
-import { ENV } from '@/constant/config';
+// import { ENV } from '@/constant/config';
 import { HttpException } from '@/core/http-exception';
 
 const catchError = async (ctx, next) => {
@@ -14,8 +14,8 @@ const catchError = async (ctx, next) => {
     // 错误是否是HttpException抛出的
     const isHttpException = error instanceof HttpException;
     // 是否是开发环境
-    const isDev = ENV === 'dev';
-    if (isDev && !isHttpException) {
+    const isDevMode = process.env.NODE_ENV === 'production' ? false : true;
+    if (isDevMode && !isHttpException) {
       throw error;
     }
     // 已知异常

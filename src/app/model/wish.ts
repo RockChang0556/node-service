@@ -1,14 +1,13 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-09 22:04:42
+ * @LastEditTime: 2022-01-10 11:18:03
  * @Description: chang/心愿单相关 model
  */
 import { Model, Op, DataTypes } from 'sequelize';
 import { sequelize } from '@/core/db';
 import { objProp, pqoParamsProp } from '@/types/query';
 import { formatQ2S } from '@/utils/utils';
-
 class WishModel extends Model {
   /**
    * and 查询

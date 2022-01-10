@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-03 21:21:54
- * @LastEditTime: 2022-01-05 19:01:04
+ * @LastEditTime: 2022-01-10 11:20:19
  * @Description: 配置文件
  */
 import path from 'path';
@@ -30,7 +30,7 @@ export const EAMIL = {
 };
 
 // 环境变量 dev-开发环境 prod-生产环境
-export const ENV = 'dev';
+// export const ENV = 'dev';
 // 服务器配置
 export const SERVICE = {
   HOST: '',
