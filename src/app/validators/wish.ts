@@ -1,20 +1,21 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-26 16:03:58
- * @LastEditTime: 2022-01-10 11:55:21
+ * @LastEditTime: 2022-01-12 17:48:00
  * @Description: 参数校验 - demo
  * https://doc.cms.talelin.com/server/koa/validator.html#%E7%B1%BB%E6%A0%A1%E9%AA%8C
  */
-import { Rule } from '@/core/validator';
 import { PositiveIntValidator } from './demo';
 
-const nameRule = [new Rule('isNotEmpty', '名称不可为空')];
-
 class NameIdValidator extends PositiveIntValidator {
-  name: Rule[];
   constructor() {
     super();
-    this.name = nameRule;
+  }
+  validateName(data) {
+    if (!data.body.name?.trim()) {
+      return [false, '名称不可为空或只含空格'];
+    }
+    return true;
   }
 }
 class UpdatefoodValidator extends PositiveIntValidator {

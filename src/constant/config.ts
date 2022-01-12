@@ -1,16 +1,16 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-03 21:21:54
- * @LastEditTime: 2022-01-10 11:20:19
+ * @LastEditTime: 2022-01-12 14:55:29
  * @Description: 配置文件
  */
 import path from 'path';
 
 // 数据库连接配置
 export const DATABASE = {
-  HOST: process.env.NODE_ENV === 'production' ? '106.52.242.121' : '127.0.0.1',
+  HOST: '106.52.242.121',
   PORT: 3306,
-  DBNAME: 'base',
+  DBNAME: process.env.NODE_ENV === 'production' ? 'base' : 'local',
   USER: 'rock',
   PASSWORD: 'zp123456',
   CONNECTION_LIMIT: 1000,

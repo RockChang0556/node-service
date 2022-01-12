@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-27 23:06:11
- * @LastEditTime: 2022-01-07 15:51:22
+ * @LastEditTime: 2022-01-10 16:41:02
  * @Description: 数据库连接
  */
 import { DATABASE } from '@/constant/config';
@@ -13,7 +13,7 @@ const sequelize = new Sequelize(DBNAME, USER, PASSWORD, {
   dialect: 'mysql',
   host: HOST,
   port: PORT,
-  // logging: false, // 执行sql时是否在控制台输出
+  logging: false, // 执行sql时是否在控制台输出
   timezone: '+08:00',
   // query: { raw: true }, // 只查询dataValues
   define: {

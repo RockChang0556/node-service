@@ -17,6 +17,9 @@ node 实现简易接口功能
 - 本地 markdown 文件地址 `/docs/api.md`
 - 在线文档: https://docs.apipost.cn/preview/d5afe6878646284b/34cd77af726d9044
 
+- 数据字典
+  https://www.yuque.com/rockchang/lt68m4/fqdf8u
+
 ## 启动项目
 
 ```
