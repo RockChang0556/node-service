@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-13 17:47:29
+ * @LastEditTime: 2022-01-13 18:27:27
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -120,20 +120,19 @@ router.post('/list', new Auth().init, async (ctx: any) => {
 router.get('/random', new Auth().init, async (ctx: any) => {
   const vs = await new LimitIntValidator().validate(ctx);
   const { limit } = vs.get('query');
-  console.log('', limit, typeof limit);
   const res = await FoodModel.findAll({
     attributes: ['id', 'name'],
     limit: limit || 10,
     order: sequelize.literal('rand()'),
   });
   // 获取心愿单详情失败
-  if (!res) throw new ErrorResponse(ERR_CODE[5101]);
+  if (!res) throw new ErrorResponse();
   throw new DataResponse(res);
 });
 
 // 获取菜品详情
 router.get('/:id', new Auth().init, async (ctx: any) => {
-  const vs = await new PositiveIntValidator().validate(ctx);
+  const vs = await new Validator().validate(ctx);
   const { id } = vs.get('path');
   const res = await FoodModel.findByPk(id);
   // 获取心愿单详情失败

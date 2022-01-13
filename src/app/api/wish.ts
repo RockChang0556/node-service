@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-13 15:56:16
+ * @LastEditTime: 2022-01-13 18:54:04
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -101,11 +101,24 @@ router.get('/:id', new Auth().init, async (ctx: any) => {
   if (!wishRes.food_list) {
     throw new DataResponse(wishRes);
   } else {
+    const foodList = wishRes.food_list.split(',');
     // 获取菜品详情
     const foodRes = await FoodModel.findAll({
-      where: { id: wishRes.food_list.split(',') },
+      where: { id: foodList },
     });
-    wishRes.food_list = foodRes;
+    // 查出来详情数量与id数量不一直, 说明有菜品删除了, 但是没有同步在愿望单里删除
+    if (foodRes.length !== foodList.length) {
+      wishRes.food_list = foodList.map((v: string) => {
+        const findOne = foodRes.find((v2: any) => v2.id === v);
+        if (!findOne) {
+          return { id: v, name: '菜品不存在', deleted: true };
+        } else {
+          return findOne;
+        }
+      });
+    } else {
+      wishRes.food_list = foodRes;
+    }
     throw new DataResponse(wishRes);
   }
 });
