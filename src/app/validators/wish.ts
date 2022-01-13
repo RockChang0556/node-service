@@ -1,8 +1,8 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-26 16:03:58
- * @LastEditTime: 2022-01-12 17:48:00
- * @Description: 参数校验 - demo
+ * @LastEditTime: 2022-01-13 15:48:19
+ * @Description: 参数校验 - 心愿单
  * https://doc.cms.talelin.com/server/koa/validator.html#%E7%B1%BB%E6%A0%A1%E9%AA%8C
  */
 import { PositiveIntValidator } from './demo';

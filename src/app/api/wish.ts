@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-10 18:45:10
+ * @LastEditTime: 2022-01-13 15:56:16
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -125,7 +125,7 @@ router.put('/:id/updatefood', new Auth().init, async (ctx: any) => {
   let food_list = getRes.food_list ? getRes.food_list.split(',') : [];
   // 添加菜品
   if (type === 'add') {
-    food_list = [...new Set([...food_list, ...food_ids])];
+    food_list = [...new Set([...food_ids, ...food_list])];
     // 删除菜品
   } else if (type === 'delete') {
     food_list = food_list.filter((v: string) => !food_ids.includes(v));

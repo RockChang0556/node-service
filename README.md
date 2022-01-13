@@ -9,7 +9,7 @@ node 实现简易接口功能
 - TypeScript
 - 模块化 - Class 写法
 - 封装权限中间件, 利用 jwt 实现接口级权限控制
-- 双 token, access_token 过期无感刷新
+- 双 token, access_token 过期重发请求无感刷新
 - 全局错误监听中间件, 错误信息更明了
 
 ## 接口文档

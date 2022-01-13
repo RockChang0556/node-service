@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-10 14:34:47
+ * @LastEditTime: 2022-01-13 17:47:29
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -17,10 +17,12 @@ import {
   Validator,
 } from '@/app/validators/demo';
 import { NameIdValidator } from '@/app/validators/wish';
+import { LimitIntValidator } from '@/app/validators/food';
 import { API } from '@/constant/config';
 import { FoodModel } from '@/app/model/food';
 import { ERR_CODE } from '@/constant/emun';
 import { removeEmpty } from '@/utils/utils';
+import { sequelize } from '@/core/db';
 
 const router = new Router();
 // 接口前缀
@@ -111,6 +113,21 @@ router.post('/list', new Auth().init, async (ctx: any) => {
     { pages, querys, orders },
     { uid: user.id }
   );
+  throw new DataResponse(res);
+});
+
+// 随机获取多个菜品
+router.get('/random', new Auth().init, async (ctx: any) => {
+  const vs = await new LimitIntValidator().validate(ctx);
+  const { limit } = vs.get('query');
+  console.log('', limit, typeof limit);
+  const res = await FoodModel.findAll({
+    attributes: ['id', 'name'],
+    limit: limit || 10,
+    order: sequelize.literal('rand()'),
+  });
+  // 获取心愿单详情失败
+  if (!res) throw new ErrorResponse(ERR_CODE[5101]);
   throw new DataResponse(res);
 });
 
