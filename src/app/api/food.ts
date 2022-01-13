@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-13 18:27:27
+ * @LastEditTime: 2022-01-13 20:50:11
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -71,39 +71,6 @@ router.post('/add', new Auth().init, async (ctx: any) => {
   throw new DataResponse(res);
 });
 
-// 删除菜品
-router.delete('/:id', new Auth().init, async (ctx: any) => {
-  const vs = await new PositiveIntValidator().validate(ctx);
-  const { id } = vs.get('path');
-  const user = ctx.user;
-  // 判断要删除的是否存在
-  const res = await FoodModel.getOne({ uid: user.id, id });
-  if (!res) throw new ErrorResponse(ERR_CODE[5102]);
-  // 删除
-  await FoodModel.destroy({ where: { uid: user.id, id } });
-  throw new SuccessResponse();
-});
-
-// 更新菜品
-router.put('/:id', new Auth().init, async (ctx: any) => {
-  const vs = await new NameIdValidator().validate(ctx);
-  const { id } = vs.get('path');
-  const { name, summary, tag, food_list } = vs.get('body');
-  const data = removeEmpty({ name, summary, tag, food_list }); // 去除值为null|undefined的属性
-  // 判断要更新的是否存在
-  const getRes = await FoodModel.getOne({ uid: ctx.user.id, id });
-  if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
-  // 更新
-  const updateRes = await FoodModel.update(data, { where: { id } });
-  if (updateRes[0] > 0) {
-    // 更新成功, 返回新数据
-    const res = await FoodModel.findByPk(id);
-    throw new DataResponse(res);
-  } else {
-    new ErrorResponse(ERR_CODE[8]);
-  }
-});
-
 // 获取登陆用户创建的菜品
 router.post('/list', new Auth().init, async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
@@ -138,6 +105,39 @@ router.get('/:id', new Auth().init, async (ctx: any) => {
   // 获取心愿单详情失败
   if (!res) throw new ErrorResponse(ERR_CODE[5101]);
   throw new DataResponse(res);
+});
+
+// 删除菜品
+router.delete('/:id', new Auth().init, async (ctx: any) => {
+  const vs = await new PositiveIntValidator().validate(ctx);
+  const { id } = vs.get('path');
+  const user = ctx.user;
+  // 判断要删除的是否存在
+  const res = await FoodModel.getOne({ uid: user.id, id });
+  if (!res) throw new ErrorResponse(ERR_CODE[5102]);
+  // 删除
+  await FoodModel.destroy({ where: { uid: user.id, id } });
+  throw new SuccessResponse();
+});
+
+// 更新菜品
+router.put('/:id', new Auth().init, async (ctx: any) => {
+  const vs = await new NameIdValidator().validate(ctx);
+  const { id } = vs.get('path');
+  const { name, summary, tag, food_list } = vs.get('body');
+  const data = removeEmpty({ name, summary, tag, food_list }); // 去除值为null|undefined的属性
+  // 判断要更新的是否存在
+  const getRes = await FoodModel.getOne({ uid: ctx.user.id, id });
+  if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
+  // 更新
+  const updateRes = await FoodModel.update(data, { where: { id } });
+  if (updateRes[0] > 0) {
+    // 更新成功, 返回新数据
+    const res = await FoodModel.findByPk(id);
+    throw new DataResponse(res);
+  } else {
+    new ErrorResponse(ERR_CODE[8]);
+  }
 });
 
 export default router;
