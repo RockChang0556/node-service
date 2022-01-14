@@ -1,8 +1,9 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-09 22:05:35
+ * @LastEditTime: 2022-01-14 16:12:50
  * @Description: chang/菜单相关 model
+ * 实体表 - food
  */
 import { sequelize } from '@/core/db';
 import { objProp, pqoParamsProp } from '@/types/query';

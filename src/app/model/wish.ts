@@ -1,13 +1,15 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-14 10:35:52
- * @Description: chang/心愿单相关 model
+ * @LastEditTime: 2022-01-14 18:01:01
+ * @Description:  chang/心愿单相关 model
+ * 实体表 - wish
  */
 import { Model, Op, DataTypes } from 'sequelize';
 import { sequelize } from '@/core/db';
 import { objProp, pqoParamsProp } from '@/types/query';
 import { formatQ2S } from '@/utils/utils';
+import { FoodModel } from '.';
 class WishModel extends Model {
   /**
    * and 查询
@@ -39,6 +41,15 @@ class WishModel extends Model {
       order,
       offset,
       limit,
+      include: {
+        model: FoodModel,
+        as: 'food_list',
+        through: {
+          // 去除联结模型的所有属性
+          attributes: [],
+        },
+        attributes: ['id', 'uid', 'name', 'pic'],
+      },
       // attributes: { exclude: ['deleted_at'] },
     });
     return res;
@@ -76,10 +87,6 @@ WishModel.init(
         const rawValue = this.getDataValue('tag');
         return rawValue ? rawValue.split(',') : [];
       },
-    },
-    food_list: {
-      type: DataTypes.TEXT,
-      comment: '菜品id列表，逗号分隔',
     },
   },
   {

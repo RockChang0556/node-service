@@ -1,8 +1,9 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-07 15:03:40
+ * @LastEditTime: 2022-01-14 16:12:40
  * @Description: 用户相关 model
+ * 实体表 - user
  */
 import { Model, DataTypes } from 'sequelize';
 import bcrypt from 'bcryptjs';

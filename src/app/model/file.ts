@@ -1,8 +1,9 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-07 15:02:32
+ * @LastEditTime: 2022-01-14 16:12:57
  * @Description: 文件相关 model
+ * 实体表 - file
  */
 import { sequelize } from '@/core/db';
 import { Model, DataTypes } from 'sequelize';

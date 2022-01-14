@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-14 10:34:26
+ * @LastEditTime: 2022-01-14 18:54:30
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -18,7 +18,7 @@ import {
 } from '@/app/validators/demo';
 import { NameIdValidator, UpdatefoodValidator } from '@/app/validators/wish';
 import { API } from '@/constant/config';
-import { WishModel, FoodModel } from '@/app/model';
+import { WishModel, FoodModel, WishFoodModel } from '@/app/model';
 import { ERR_CODE } from '@/constant/emun';
 import { removeEmpty } from '@/utils/utils';
 
@@ -29,14 +29,13 @@ router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/chang/wish`);
 // 新增心愿单
 router.post('/add', new Auth().init, async (ctx: any) => {
   const vs = await new NameValidator().validate(ctx);
-  const { name, summary, tag, food_list } = vs.get('body');
+  const { name, summary, tag } = vs.get('body');
   const user = ctx.user;
   const res = await WishModel.create({
     uid: user.id,
     name,
     summary,
     tag,
-    food_list,
   });
   throw new DataResponse(res);
 });
@@ -53,6 +52,25 @@ router.post('/list', new Auth().init, async (ctx: any) => {
   throw new DataResponse(res);
 });
 
+// 获取心愿单下菜品
+router.get('/:id/food_list', new Auth().init, async (ctx: any) => {
+  const vs = await new PositiveIntValidator().validate(ctx);
+  const { id } = vs.get('path');
+  const wishRes: any = await WishModel.getOne({ uid: ctx.user.id, id });
+  // 获取心愿单详情失败
+  if (!wishRes) throw new ErrorResponse(ERR_CODE[5000]);
+  const foodIds = (await WishFoodModel.findAll({ where: { wish_id: id } })).map(
+    (v: any) => v.food_id
+  );
+  // 没有菜品id, 直接返回空数组, 减少数据库操作
+  if (!foodIds.length) throw new DataResponse([]);
+  // 获取菜品详情
+  const foodRes = await FoodModel.findAll({
+    where: { id: foodIds },
+  });
+  throw new DataResponse(foodRes);
+});
+
 // 更新心愿单下菜品
 router.put('/:id/updatefood', new Auth().init, async (ctx: any) => {
   const vs = await new UpdatefoodValidator().validate(ctx);
@@ -60,65 +78,63 @@ router.put('/:id/updatefood', new Auth().init, async (ctx: any) => {
   const { type, food_ids } = vs.get('body');
   const user = ctx.user;
   // 判断要更新的是否存在
-  const getRes: any = await WishModel.getOne({
-    uid: user.id,
-    id,
-  });
+  const getRes: any = await WishModel.getOne({ uid: user.id, id });
   if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
-  let food_list = getRes.food_list ? getRes.food_list.split(',') : [];
+  if (!food_ids.length) throw new SuccessResponse();
   // 添加菜品
   if (type === 'add') {
-    food_list = [...new Set([...food_ids, ...food_list])];
+    food_ids.map(async v => {
+      // 兼容处理 避免报错
+      const havFood = await FoodModel.findByPk(v);
+      if (!havFood) {
+        return;
+      }
+      const havWishFood = await WishFoodModel.findOne({
+        where: { wish_id: id, food_id: v },
+      });
+      if (!havWishFood) {
+        await WishFoodModel.create({ wish_id: id, food_id: v });
+      }
+    });
     // 删除菜品
   } else if (type === 'delete') {
-    food_list = food_list.filter((v: string) => !food_ids.includes(v));
+    food_ids.map(async v => {
+      await WishFoodModel.destroy({
+        where: { wish_id: id, food_id: v },
+        force: true,
+      });
+    });
   }
-  // 更新
-  const updateRes = await WishModel.update(
-    { food_list: food_list.join(',') },
-    { where: { id } }
-  );
-  if (updateRes[0] > 0) {
-    // 更新成功
-    throw new SuccessResponse();
-  } else {
-    new ErrorResponse(ERR_CODE[8]);
-  }
+  throw new SuccessResponse();
 });
 
-// 获取心愿单详情
-router.get('/:id', new Auth().init, async (ctx: any) => {
+// 获取心愿单基本信息
+router.get('/:id/base', new Auth().init, async (ctx: any) => {
   const vs = await new PositiveIntValidator().validate(ctx);
   const { id } = vs.get('path');
-  const wishRes: any = await WishModel.getOne({
-    uid: ctx.user.id,
-    id,
-  });
+  const wishRes: any = await WishModel.getOne({ uid: ctx.user.id, id });
   // 获取心愿单详情失败
   if (!wishRes) throw new ErrorResponse(ERR_CODE[5000]);
-  // 心愿单下没有菜品, 直接返回
-  if (!wishRes.food_list) {
-    throw new DataResponse(wishRes);
+  throw new DataResponse(wishRes);
+});
+
+// 更新心愿单基本信息
+router.put('/:id/base', new Auth().init, async (ctx: any) => {
+  const vs = await new NameIdValidator().validate(ctx);
+  const { id } = vs.get('path');
+  const { name, summary, tag } = vs.get('body');
+  const data = removeEmpty({ name, summary, tag }); // 去除值为null|undefined的属性
+  // 判断要更新的是否存在
+  const getRes = await WishModel.getOne({ uid: ctx.user.id, id });
+  if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
+  // 更新
+  const updateRes = await WishModel.update(data, { where: { id } });
+  if (updateRes[0] > 0) {
+    // 更新成功, 返回新数据
+    const res = await WishModel.findByPk(id);
+    throw new DataResponse(res);
   } else {
-    const foodList = wishRes.food_list.split(',');
-    // 获取菜品详情
-    const foodRes = await FoodModel.findAll({
-      where: { id: foodList },
-    });
-    // 查出来详情数量与id数量不一直, 说明有菜品删除了, 但是没有同步在愿望单里删除
-    if (foodRes.length !== foodList.length) {
-      wishRes.food_list = foodList.map((v: string) => {
-        const findOne = foodRes.find((v2: any) => v2.id === v);
-        if (!findOne) {
-          return { id: v, name: '菜品不存在', deleted: true };
-        } else {
-          return findOne;
-        }
-      });
-    } else {
-      wishRes.food_list = foodRes;
-    }
-    throw new DataResponse(wishRes);
+    new ErrorResponse(ERR_CODE[8]);
   }
 });
 
@@ -133,26 +149,6 @@ router.delete('/:id', new Auth().init, async (ctx: any) => {
   // 删除
   await WishModel.destroy({ where: { id } });
   throw new SuccessResponse();
-});
-
-// 更新心愿单
-router.put('/:id', new Auth().init, async (ctx: any) => {
-  const vs = await new NameIdValidator().validate(ctx);
-  const { id } = vs.get('path');
-  const { name, summary, tag, food_list } = vs.get('body');
-  const data = removeEmpty({ name, summary, tag, food_list }); // 去除值为null|undefined的属性
-  // 判断要更新的是否存在
-  const getRes = await WishModel.getOne({ uid: ctx.user.id, id });
-  if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
-  // 更新
-  const updateRes = await WishModel.update(data, { where: { id } });
-  if (updateRes[0] > 0) {
-    // 更新成功, 返回新数据
-    const res = await WishModel.findByPk(id);
-    throw new DataResponse(res);
-  } else {
-    new ErrorResponse(ERR_CODE[8]);
-  }
 });
 
 export default router;

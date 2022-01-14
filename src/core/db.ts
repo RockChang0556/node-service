@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-04-27 23:06:11
- * @LastEditTime: 2022-01-10 16:41:02
+ * @LastEditTime: 2022-01-14 17:54:57
  * @Description: 数据库连接
  */
 import { DATABASE } from '@/constant/config';
