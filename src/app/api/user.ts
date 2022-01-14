@@ -29,7 +29,7 @@ import { jwt, TokenType } from '@/utils/jwt';
 import { emailUtils, captchaCode } from '@/utils/email';
 import { ADMIN, ERR_CODE } from '@/constant/emun';
 import { API } from '@/constant/config';
-import { UserModel } from '@/app/model/user';
+import { UserModel } from '@/app/model';
 
 const router = new Router();
 // 接口前缀

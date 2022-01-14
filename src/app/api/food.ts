@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-13 20:50:11
+ * @LastEditTime: 2022-01-14 10:58:45
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -19,7 +19,7 @@ import {
 import { NameIdValidator } from '@/app/validators/wish';
 import { LimitIntValidator } from '@/app/validators/food';
 import { API } from '@/constant/config';
-import { FoodModel } from '@/app/model/food';
+import { FoodModel } from '@/app/model';
 import { ERR_CODE } from '@/constant/emun';
 import { removeEmpty } from '@/utils/utils';
 import { sequelize } from '@/core/db';

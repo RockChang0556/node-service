@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-13 21:37:55
+ * @LastEditTime: 2022-01-14 10:34:26
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -18,8 +18,7 @@ import {
 } from '@/app/validators/demo';
 import { NameIdValidator, UpdatefoodValidator } from '@/app/validators/wish';
 import { API } from '@/constant/config';
-import { WishModel } from '@/app/model/wish';
-import { FoodModel } from '@/app/model/food';
+import { WishModel, FoodModel } from '@/app/model';
 import { ERR_CODE } from '@/constant/emun';
 import { removeEmpty } from '@/utils/utils';
 

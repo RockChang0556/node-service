@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 10:12:10
- * @LastEditTime: 2022-01-05 19:20:21
+ * @LastEditTime: 2022-01-14 10:58:35
  * @Description: 文件相关接口
  */
 import fs from 'fs';
@@ -16,8 +16,7 @@ import { PositiveIntValidator, Validator } from '@/app/validators/demo';
 import { ADMIN } from '@/constant/emun';
 import { file } from '@/utils/file';
 import { API } from '@/constant/config';
-import { FileModel } from '@/app/model/file';
-import { UserModel } from '@/app/model/user';
+import { FileModel, UserModel } from '@/app/model';
 
 const router = new Router();
 // 接口前缀

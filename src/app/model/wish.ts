@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-10 11:18:03
+ * @LastEditTime: 2022-01-14 10:35:52
  * @Description: chang/心愿单相关 model
  */
 import { Model, Op, DataTypes } from 'sequelize';
