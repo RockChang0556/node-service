@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-14 10:58:45
+ * @LastEditTime: 2022-01-14 19:09:30
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -84,7 +84,7 @@ router.post('/list', new Auth().init, async (ctx: any) => {
 });
 
 // 随机获取多个菜品
-router.get('/random', new Auth().init, async (ctx: any) => {
+router.get('/random', async (ctx: any) => {
   const vs = await new LimitIntValidator().validate(ctx);
   const { limit } = vs.get('query');
   const res = await FoodModel.findAll({
