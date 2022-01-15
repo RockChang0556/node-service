@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-14 19:09:30
+ * @LastEditTime: 2022-01-14 20:24:25
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -98,7 +98,7 @@ router.get('/random', async (ctx: any) => {
 });
 
 // 获取菜品详情
-router.get('/:id', new Auth().init, async (ctx: any) => {
+router.get('/:id', async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const { id } = vs.get('path');
   const res = await FoodModel.findByPk(id);
