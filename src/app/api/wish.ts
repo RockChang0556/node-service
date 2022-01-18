@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-14 18:54:30
+ * @LastEditTime: 2022-01-18 21:11:54
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -81,30 +81,7 @@ router.put('/:id/updatefood', new Auth().init, async (ctx: any) => {
   const getRes: any = await WishModel.getOne({ uid: user.id, id });
   if (!getRes) throw new ErrorResponse(ERR_CODE[7]);
   if (!food_ids.length) throw new SuccessResponse();
-  // 添加菜品
-  if (type === 'add') {
-    food_ids.map(async v => {
-      // 兼容处理 避免报错
-      const havFood = await FoodModel.findByPk(v);
-      if (!havFood) {
-        return;
-      }
-      const havWishFood = await WishFoodModel.findOne({
-        where: { wish_id: id, food_id: v },
-      });
-      if (!havWishFood) {
-        await WishFoodModel.create({ wish_id: id, food_id: v });
-      }
-    });
-    // 删除菜品
-  } else if (type === 'delete') {
-    food_ids.map(async v => {
-      await WishFoodModel.destroy({
-        where: { wish_id: id, food_id: v },
-        force: true,
-      });
-    });
-  }
+  await WishModel.updateFoods(id, type, food_ids);
   throw new SuccessResponse();
 });
 

@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-14 18:01:01
+ * @LastEditTime: 2022-01-18 21:18:35
  * @Description:  chang/心愿单相关 model
  * 实体表 - wish
  */
@@ -9,8 +9,37 @@ import { Model, Op, DataTypes } from 'sequelize';
 import { sequelize } from '@/core/db';
 import { objProp, pqoParamsProp } from '@/types/query';
 import { formatQ2S } from '@/utils/utils';
-import { FoodModel } from '.';
+import { FoodModel, WishFoodModel } from '.';
 class WishModel extends Model {
+  /**
+   * 更新心愿单下菜品
+   * @param {*} val 值
+   */
+  static async updateFoods(id, type, food_ids) {
+    // 添加菜品
+    if (type === 'add') {
+      for (let index = 0; index < food_ids.length; index++) {
+        const v = food_ids[index];
+        // 兼容处理 避免报错
+        const havFood = await FoodModel.findByPk(v);
+        if (!havFood) continue;
+        const havWishFood = await WishFoodModel.findOne({
+          where: { wish_id: id, food_id: v },
+        });
+        if (havWishFood) continue;
+        await WishFoodModel.create({ wish_id: id, food_id: v });
+      }
+      // 删除菜品
+    } else if (type === 'delete') {
+      for (let index = 0; index < food_ids.length; index++) {
+        const v = food_ids[index];
+        await WishFoodModel.destroy({
+          where: { wish_id: id, food_id: v },
+          force: true,
+        });
+      }
+    }
+  }
   /**
    * and 查询
    * 如参数是 {a: 1, b: 2}, 会查询 a=1&b=2 的数据
