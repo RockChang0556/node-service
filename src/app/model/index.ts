@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-14 10:26:12
- * @LastEditTime: 2022-01-14 18:01:06
+ * @LastEditTime: 2022-01-25 16:02:27
  * @Description: 模型关系处理 / 首页
  */
 import { FileModel } from './file';
@@ -9,6 +9,7 @@ import { FoodModel } from './food';
 import { UserModel } from './user';
 import { WishModel } from './wish';
 import { WishFoodModel } from './wish_food';
+import { FoodLikesModel } from './food_likes';
 
 // 用户:心愿单   1:N
 UserModel.hasMany(WishModel, {
@@ -31,4 +32,11 @@ FoodModel.belongsToMany(WishModel, {
   foreignKey: 'food_id',
 });
 
-export { FileModel, FoodModel, UserModel, WishModel, WishFoodModel };
+export {
+  FileModel,
+  FoodModel,
+  UserModel,
+  WishModel,
+  WishFoodModel,
+  FoodLikesModel,
+};
