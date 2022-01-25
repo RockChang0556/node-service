@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-25 16:47:14
+ * @LastEditTime: 2022-01-25 21:36:41
  * @Description: chang/菜单相关 model
  * 实体表 - food
  */
@@ -9,6 +9,7 @@ import { sequelize } from '@/core/db';
 import { objProp, pqoParamsProp } from '@/types/query';
 import { formatQ2S, parseJSON } from '@/utils/utils';
 import Sequelize, { Model, Op, DataTypes } from 'sequelize';
+import { UserModel } from '.';
 
 class FoodModel extends Model {
   /**
@@ -19,6 +20,32 @@ class FoodModel extends Model {
   static async getOne(obj) {
     const getRes = await FoodModel.findOne({
       where: obj,
+    });
+    return getRes;
+  }
+  /** 获取菜品详情
+   * @param {*} val 值
+   */
+  static async getDetail(obj) {
+    const getRes = await FoodModel.findOne({
+      where: obj,
+      attributes: {
+        exclude: ['uid'],
+      },
+      include: {
+        model: UserModel,
+        as: 'creator',
+        attributes: {
+          exclude: [
+            'created_at',
+            'deleted_at',
+            'updated_at',
+            'admin',
+            'sign_count',
+            'password',
+          ],
+        },
+      },
     });
     return getRes;
   }

@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-14 10:26:12
- * @LastEditTime: 2022-01-25 16:02:27
+ * @LastEditTime: 2022-01-25 21:36:03
  * @Description: 模型关系处理 / 首页
  */
 import { FileModel } from './file';
@@ -19,6 +19,18 @@ UserModel.hasMany(WishModel, {
 WishModel.belongsTo(UserModel, {
   foreignKey: 'uid',
   as: 'user_info',
+});
+
+// 用户:菜品   1:N
+UserModel.hasMany(FoodModel, {
+  foreignKey: 'uid',
+  sourceKey: 'id',
+  // as: 'food_list',
+});
+FoodModel.belongsTo(UserModel, {
+  foreignKey: 'uid',
+  targetKey: 'id',
+  as: 'creator',
 });
 
 // 心愿单:菜品   M:N
