@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-26 11:52:07
+ * @LastEditTime: 2022-01-26 19:53:37
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -28,12 +28,13 @@ router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/chang/food`);
 router.post('/likelist', new Auth().init, async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const { pages, querys, orders } = vs.get('body');
+  const userid = ctx.user.id;
   const likeRes = await FoodLikesModel.getAll(
     { pages, querys, orders },
-    { uid: ctx.user.id }
+    { uid: userid }
   );
   const foodids = likeRes.rows.map((v: any) => v.food_id);
-  const foodRes = await FoodModel.getAll({}, { id: foodids });
+  const foodRes = await FoodModel.getAll(userid, {}, { id: foodids });
   throw new DataResponse(foodRes);
 });
 
@@ -119,6 +120,7 @@ router.post('/list', new Auth().init, async (ctx: any) => {
   const { pages, querys, orders } = vs.get('body');
   const user = ctx.user;
   const res = await FoodModel.getAll(
+    user.id,
     { pages, querys, orders },
     { uid: user.id }
   );

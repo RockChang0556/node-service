@@ -1,15 +1,15 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-26 11:55:53
+ * @LastEditTime: 2022-01-26 19:51:21
  * @Description: chang/菜单相关 model
  * 实体表 - food
  */
+import Sequelize, { Model, Op, DataTypes } from 'sequelize';
 import { sequelize } from '@/core/db';
 import { objProp, pqoParamsProp } from '@/types/query';
 import { formatQ2S, parseJSON } from '@/utils/utils';
-import Sequelize, { Model, Op, DataTypes } from 'sequelize';
-import { UserModel } from '.';
+import { FoodLikesModel, UserModel } from '.';
 
 class FoodModel extends Model {
   /**
@@ -50,10 +50,11 @@ class FoodModel extends Model {
     return getRes;
   }
   /** 分页模糊查询所有数据
+   * @param {*} userid 用户id, 判断是否点赞用
    * @param {*} querys 查询公共参数
-   * @return {*} obj 其他 where 限制参数
+   * @param {*} obj 其他 where 限制参数
    */
-  static async getAll(querys: pqoParamsProp, obj?: objProp) {
+  static async getAll(userid: string, querys: pqoParamsProp, obj?: objProp) {
     const { query, order, offset, limit } = formatQ2S(querys);
     // 查询参数处理
     const where: any[] = obj ? [obj] : [];
@@ -68,6 +69,16 @@ class FoodModel extends Model {
       offset,
       limit,
       attributes: ['id', 'name', 'pic', 'content', 'favs', 'tag'],
+    });
+    // 用户喜欢的所有菜品
+    const likes = (
+      await FoodLikesModel.findAll({ where: { uid: userid } })
+    ).map((v: any) => v.food_id);
+    // 设置 islike 字段
+    res.rows.forEach((v: any) => {
+      if (likes.includes(v.id)) {
+        v.setDataValue('islike', true);
+      }
     });
     return res;
   }

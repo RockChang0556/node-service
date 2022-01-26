@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-18 21:11:54
+ * @LastEditTime: 2022-01-26 19:26:42
  * @Description: 吃什么 - 心愿单接口
  */
 import Router from 'koa-router';
@@ -65,10 +65,8 @@ router.get('/:id/food_list', new Auth().init, async (ctx: any) => {
   // 没有菜品id, 直接返回空数组, 减少数据库操作
   if (!foodIds.length) throw new DataResponse([]);
   // 获取菜品详情
-  const foodRes = await FoodModel.findAll({
-    where: { id: foodIds },
-  });
-  throw new DataResponse(foodRes);
+  const foodRes = await FoodModel.getAll(ctx.user.id, {}, { id: foodIds });
+  throw new DataResponse(foodRes.rows);
 });
 
 // 更新心愿单下菜品

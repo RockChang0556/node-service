@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-17 14:11:05
- * @LastEditTime: 2022-01-05 19:19:19
+ * @LastEditTime: 2022-01-26 15:07:21
  * @Description: 文件类, 提供文件上传功能
  *
  * 不用koa-body原因, 开发时候没有拿到上传成功的回调
@@ -22,7 +22,7 @@ import { FILE } from '@/constant/config';
 class FileUtil {
   // 上传文件
   async upload(ctx) {
-    let reqFile = ctx.request.files?.file;
+    const reqFile = ctx.request.files?.file;
     if (!reqFile) {
       throw new ErrorResponse(ERR_CODE[1501], 1501);
     }
