@@ -1,14 +1,16 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-25 15:57:46
- * @LastEditTime: 2022-01-25 16:56:13
+ * @LastEditTime: 2022-01-26 12:16:06
  * @Description: 业务表 菜品点赞
  */
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Op } from 'sequelize';
 import { sequelize } from '@/core/db';
 import { ErrorResponse } from '@/core/http-exception';
 import { ERR_CODE } from '@/constant/emun';
 import { FoodModel } from '.';
+import { formatQ2S } from '@/utils/utils';
+import { objProp, pqoParamsProp } from '@/types/query';
 
 class FoodLikesModel extends Model {
   // 点赞菜品
@@ -37,6 +39,27 @@ class FoodLikesModel extends Model {
       const foodRes = await FoodModel.findByPk(food_id);
       await foodRes.decrement('favs', { transaction: t });
     });
+  }
+  /** 分页模糊查询所有数据
+   * @param {*} querys 查询公共参数
+   * @return {*} obj 其他 where 限制参数
+   */
+  static async getAll(querys: pqoParamsProp, obj: objProp) {
+    const { query, order, offset, limit } = formatQ2S(querys);
+    // 查询参数处理
+    const where: any[] = obj ? [obj] : [];
+    if (query) {
+      where.push(...query);
+    }
+    const res = await FoodLikesModel.findAndCountAll({
+      where: {
+        [Op.and]: where,
+      },
+      order,
+      offset,
+      limit,
+    });
+    return res;
   }
 }
 FoodLikesModel.init(

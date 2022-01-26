@@ -1,7 +1,7 @@
 /*
  * @Author: Peng zhang
  * @Date: 2021-02-25 21:37:02
- * @LastEditTime: 2022-01-06 17:57:45
+ * @LastEditTime: 2022-01-26 10:39:57
  * @Description: 用户相关接口
  */
 import bcrypt from 'bcryptjs';
@@ -40,7 +40,8 @@ router.post('/login', async ctx => {
   const vs = await new Validator().validate(ctx);
   const { account, password, sid, captcha, register } = vs.get('body');
   // 非注册自动登录的,校验图形验证码
-  if (!register) {
+  const isDevMode = process.env.NODE_ENV === 'production' ? false : true;
+  if (!register && !isDevMode) {
     await new LoginValidator().validate(ctx);
     await captchaCode.verifyCode(sid, captcha);
   } else {

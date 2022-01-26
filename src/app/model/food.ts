@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-25 21:36:41
+ * @LastEditTime: 2022-01-26 11:55:53
  * @Description: chang/菜单相关 model
  * 实体表 - food
  */
@@ -53,7 +53,7 @@ class FoodModel extends Model {
    * @param {*} querys 查询公共参数
    * @return {*} obj 其他 where 限制参数
    */
-  static async getAll(querys: pqoParamsProp, obj: objProp) {
+  static async getAll(querys: pqoParamsProp, obj?: objProp) {
     const { query, order, offset, limit } = formatQ2S(querys);
     // 查询参数处理
     const where: any[] = obj ? [obj] : [];
@@ -67,7 +67,7 @@ class FoodModel extends Model {
       order,
       offset,
       limit,
-      // attributes: { exclude: ['deleted_at'] },
+      attributes: ['id', 'name', 'pic', 'content', 'favs', 'tag'],
     });
     return res;
   }

@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-25 21:24:35
+ * @LastEditTime: 2022-01-26 11:52:07
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -11,11 +11,7 @@ import {
   SuccessResponse,
   ErrorResponse,
 } from '@/core/http-exception';
-import {
-  PositiveIntValidator,
-  NameValidator,
-  Validator,
-} from '@/app/validators/demo';
+import { NameValidator, Validator } from '@/app/validators/demo';
 import { NameIdValidator } from '@/app/validators/wish';
 import { LimitIntValidator, LikesValidator } from '@/app/validators/food';
 import { API } from '@/constant/config';
@@ -27,6 +23,19 @@ import { sequelize } from '@/core/db';
 const router = new Router();
 // 接口前缀
 router.prefix(`${API.PROJECT_INTERFACE_PREFIX}/chang/food`);
+
+// 获取登陆用户点赞过的菜品
+router.post('/likelist', new Auth().init, async (ctx: any) => {
+  const vs = await new Validator().validate(ctx);
+  const { pages, querys, orders } = vs.get('body');
+  const likeRes = await FoodLikesModel.getAll(
+    { pages, querys, orders },
+    { uid: ctx.user.id }
+  );
+  const foodids = likeRes.rows.map((v: any) => v.food_id);
+  const foodRes = await FoodModel.getAll({}, { id: foodids });
+  throw new DataResponse(foodRes);
+});
 
 // 点赞/取消点赞 菜品
 router.put('/:id/likes', new Auth().init, async (ctx: any) => {
@@ -47,7 +56,7 @@ router.put('/:id/likes', new Auth().init, async (ctx: any) => {
 
 // 获取当前用户对当前菜品点赞信息 (点赞数量, 当前用户是否点赞当前菜品)
 router.get('/:id/likes', new Auth().init, async (ctx: any) => {
-  const vs = await new PositiveIntValidator().validate(ctx);
+  const vs = await new Validator().validate(ctx);
   const { id } = vs.get('path');
   // 判断要查询的是否存在
   const getRes: any = await FoodModel.findByPk(id);
@@ -142,7 +151,7 @@ router.get('/:id', async (ctx: any) => {
 
 // 删除菜品
 router.delete('/:id', new Auth().init, async (ctx: any) => {
-  const vs = await new PositiveIntValidator().validate(ctx);
+  const vs = await new Validator().validate(ctx);
   const { id } = vs.get('path');
   const user = ctx.user;
   // 判断要删除的是否存在

@@ -1,12 +1,11 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-13 15:48:40
- * @LastEditTime: 2022-01-25 16:55:15
+ * @LastEditTime: 2022-01-25 22:46:11
  * @Description: 参数校验 = 菜品
  */
 
 import { Validator, Rule } from '@/core/validator';
-import { PositiveIntValidator } from './demo';
 
 class LimitIntValidator extends Validator {
   limit: Rule[];
@@ -19,7 +18,7 @@ class LimitIntValidator extends Validator {
   }
 }
 
-class LikesValidator extends PositiveIntValidator {
+class LikesValidator extends Validator {
   constructor() {
     super();
   }
