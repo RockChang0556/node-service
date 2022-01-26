@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-26 19:53:37
+ * @LastEditTime: 2022-01-26 22:37:07
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -86,7 +86,7 @@ router.post('/add', new Auth().init, async (ctx: any) => {
     material,
     process,
   } = vs.get('body');
-  const data = removeEmpty({
+  const data: any = removeEmpty({
     id,
     name,
     pic,
