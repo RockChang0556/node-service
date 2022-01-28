@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2022-01-06 12:24:12
- * @LastEditTime: 2022-01-26 22:37:07
+ * @LastEditTime: 2022-01-28 19:13:53
  * @Description: 吃什么 - 菜品接口
  */
 import Router from 'koa-router';
@@ -145,7 +145,8 @@ router.get('/random', async (ctx: any) => {
 router.get('/:id', async (ctx: any) => {
   const vs = await new Validator().validate(ctx);
   const { id } = vs.get('path');
-  const res = await FoodModel.getDetail({ id });
+  const res: any = await FoodModel.getDetail({ id });
+  res.includes = ['created_at'];
   // 获取心愿单详情失败
   if (!res) throw new ErrorResponse(ERR_CODE[5101]);
   throw new DataResponse(res);

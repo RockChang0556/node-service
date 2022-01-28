@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-26 19:51:21
+ * @LastEditTime: 2022-01-28 19:20:37
  * @Description: chang/菜单相关 model
  * 实体表 - food
  */
@@ -38,7 +38,6 @@ class FoodModel extends Model {
         attributes: {
           exclude: [
             'created_at',
-            'deleted_at',
             'updated_at',
             'admin',
             'sign_count',

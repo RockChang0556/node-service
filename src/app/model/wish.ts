@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-18 21:18:35
+ * @LastEditTime: 2022-01-28 19:22:57
  * @Description:  chang/心愿单相关 model
  * 实体表 - wish
  */
@@ -79,7 +79,7 @@ class WishModel extends Model {
         },
         attributes: ['id', 'uid', 'name', 'pic'],
       },
-      // attributes: { exclude: ['deleted_at'] },
+      // attributes: { exclude: ['created_at', 'updated_at'] },
     });
     return res;
   }
