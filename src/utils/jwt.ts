@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-08-11 16:02:03
- * @LastEditTime: 2022-01-05 19:37:23
+ * @LastEditTime: 2022-01-29 11:54:10
  * @Description: 令牌类，提供令牌的生成和解析功能 code范围4000-4100
  * https://github.com/TaleLin/lin-cms-koa-core/blob/master/lib/jwt/jwt.ts
  */
@@ -76,7 +76,7 @@ class Token {
     if (!this.secret) {
       throw new Error('secret can not be empty');
     }
-    let exp: number = Math.floor(Date.now() / 1000) + this.accessExp;
+    const exp: number = Math.floor(Date.now() / 1000) + this.accessExp;
     return jwtGenerator.sign(
       {
         exp,
@@ -96,7 +96,7 @@ class Token {
     if (!this.secret) {
       throw new Error('secret can not be empty');
     }
-    let exp: number = Math.floor(Date.now() / 1000) + this.refreshExp;
+    const exp: number = Math.floor(Date.now() / 1000) + this.refreshExp;
     return jwtGenerator.sign(
       {
         exp,
@@ -127,7 +127,6 @@ class Token {
       const token = parts[1];
 
       if (/^Bearer$/i.test(scheme)) {
-        // @ts-ignore
         const obj = this.verifyToken(token, type);
         if (!get(obj, 'type') || get(obj, 'type') !== type) {
           throw new AuthFailed(ERR_CODE[4005], 4005);

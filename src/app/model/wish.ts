@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-01-28 19:22:57
+ * @LastEditTime: 2022-02-24 16:31:26
  * @Description:  chang/心愿单相关 model
  * 实体表 - wish
  */
@@ -15,7 +15,7 @@ class WishModel extends Model {
    * 更新心愿单下菜品
    * @param {*} val 值
    */
-  static async updateFoods(id, type, food_ids) {
+  static async updateFoods(id: string, type: string, food_ids: string[]) {
     // 添加菜品
     if (type === 'add') {
       for (let index = 0; index < food_ids.length; index++) {
@@ -45,7 +45,7 @@ class WishModel extends Model {
    * 如参数是 {a: 1, b: 2}, 会查询 a=1&b=2 的数据
    * @param {*} val 值
    */
-  static async getOne(obj) {
+  static async getOne(obj: objProp) {
     const getRes = await WishModel.findOne({
       where: obj,
     });
