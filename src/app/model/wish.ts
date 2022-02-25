@@ -1,7 +1,7 @@
 /*
  * @Author: Rock Chang
  * @Date: 2021-12-21 20:23:26
- * @LastEditTime: 2022-02-24 16:31:26
+ * @LastEditTime: 2022-02-25 18:55:52
  * @Description:  chang/心愿单相关 model
  * 实体表 - wish
  */
@@ -63,7 +63,12 @@ class WishModel extends Model {
     if (query) {
       where.push(...query);
     }
-    const res = await WishModel.findAndCountAll({
+    const count = await WishModel.count({
+      where: {
+        [Op.and]: where,
+      },
+    });
+    const res = await WishModel.findAll({
       where: {
         [Op.and]: where,
       },
@@ -79,9 +84,12 @@ class WishModel extends Model {
         },
         attributes: ['id', 'uid', 'name', 'pic'],
       },
-      // attributes: { exclude: ['created_at', 'updated_at'] },
+      // attributes: { exclude: ['created_at', 'updated_at', 'deleted_at'] },
     });
-    return res;
+    return {
+      count,
+      rows: res,
+    };
   }
 }
 
